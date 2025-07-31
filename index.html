@@ -1,118 +1,118 @@
-# FEDoc - Farming Game Engine Documentation
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FEDoc - Farming Game Engine Documentation</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; color: #1a1a1a; }
+    h1, h2, h3 { color: #1565c0; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #bbb; padding: 0.5rem; }
+    th { background: #e3f2fd; }
+    code { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; }
+    hr { margin: 2rem 0; }
+  </style>
+</head>
+<body>
+  <h1>FEDoc - Farming Game Engine Documentation</h1>
 
-## Overview
+  <h2>Overview</h2>
+  <p>
+    Welcome to <strong>FEDoc</strong>, the official documentation for the Farming Game Engine built using <strong>Unreal Engine 5.6</strong> in <strong>C++</strong>.<br>
+    This engine powers a farming game focusing on inventory management, resource harvesting, player stats, and interactive environmental elements.
+  </p>
+  <hr>
 
-Welcome to **FEDoc**, the official documentation for the Farming Game Engine built using **Unreal Engine 5.6** in **C++**.  
-This engine powers a farming game focusing on inventory management, resource harvesting, player stats, and interactive environmental elements.
+  <h2>Core Systems</h2>
 
----
+  <h3>Inventory System</h3>
+  <ul>
+    <li><strong>InventoryComponent</strong>: Manages inventory logic including adding, removing, and item stacking. Fires events on inventory changes to update UI.</li>
+    <li><strong>InventorySlot</strong>: Handles logic for item stacking and updating individual slots.</li>
+    <li><strong>InventoryWidget / InventorySlotWidget</strong>: Provides visual representation and interactive UI for inventory management. Supports drag-and-drop item movement and quick access.</li>
+  </ul>
 
-## Core Systems
+  <h3>Player Character</h3>
+  <ul>
+    <li><strong>FarmerCharacter</strong>: Central pawn class for the player, integrating input handling for movement, interactions, harvesting, and combat. Utilizes <strong>StatsComponent</strong> for managing player attributes such as health and stamina.</li>
+    <li><strong>FarmerController</strong>: Custom controller managing player input, camera systems, and interaction logic.</li>
+  </ul>
 
-### Inventory System
+  <h3>Game Management</h3>
+  <ul>
+    <li><strong>GM_Farm</strong>: Core gameplay manager responsible for maintaining overall game state, including player spawning and initialization.</li>
+  </ul>
 
-- **InventoryComponent**  
-  Manages inventory logic including adding, removing, and item stacking.  
-  Fires events on inventory changes to update UI.
+  <h3>Items & Resources</h3>
+  <ul>
+    <li><strong>ItemData</strong>: Data-driven approach defining properties for each in-game item, such as icons, stack limits, and interactions.</li>
+    <li><strong>DroppedItem / DroppedTreeLoot</strong>: Represents physical items spawned in-world, collectible by player interaction after harvesting or resource depletion.</li>
+  </ul>
 
-- **InventorySlot**  
-  Handles logic for item stacking and updating individual slots.
+  <h3>Environment & Interaction</h3>
+  <ul>
+    <li><strong>TreeActor</strong>: Represents trees in-game, serving as harvestable resources. Implements the <code>DamageableInterface</code> to facilitate harvesting mechanics.</li>
+    <li><strong>DamageableInterface</strong>: Standardized interface for destructible or interactive resources, streamlining interaction logic.</li>
+  </ul>
 
-- **InventoryWidget / InventorySlotWidget**  
-  Provides visual representation and interactive UI for inventory management.  
-  Supports drag-and-drop item movement and quick access.
+  <h3>Player Stats & Damage</h3>
+  <ul>
+    <li><strong>StatsComponent</strong>: Manages player-specific attributes including health, stamina, damage calculation, and healing. Notifies relevant systems when stats change, enabling dynamic gameplay and UI updates.</li>
+  </ul>
+  <hr>
 
-### Player Character
+  <h2>Class Reference</h2>
+  <table>
+    <tr>
+      <th>Class Name</th>
+      <th>Description</th>
+    </tr>
+    <tr><td><strong>FarmerCharacter</strong></td><td>Player pawn handling core gameplay mechanics.</td></tr>
+    <tr><td><strong>FarmerController</strong></td><td>Manages input, camera controls, interactions.</td></tr>
+    <tr><td><strong>GM_Farm</strong></td><td>GameMode handling game state and logic.</td></tr>
+    <tr><td><strong>InventoryComponent</strong></td><td>Backend inventory management logic.</td></tr>
+    <tr><td><strong>InventoryWidget</strong></td><td>Visual inventory UI for player interaction.</td></tr>
+    <tr><td><strong>InventorySlotWidget</strong></td><td>UI representation for single inventory slots.</td></tr>
+    <tr><td><strong>ItemData</strong></td><td>Defines in-game item properties.</td></tr>
+    <tr><td><strong>TreeActor</strong></td><td>Harvestable resource actor.</td></tr>
+    <tr><td><strong>DroppedItem</strong></td><td>Generic dropped collectible items.</td></tr>
+    <tr><td><strong>DroppedTreeLoot</strong></td><td>Specific loot from tree harvesting.</td></tr>
+    <tr><td><strong>DamageableInterface</strong></td><td>Interface for destructible resources.</td></tr>
+    <tr><td><strong>StatsComponent</strong></td><td>Manages player health, stamina, and effects.</td></tr>
+  </table>
+  <hr>
 
-- **FarmerCharacter**  
-  Central pawn class for the player, integrating input handling for movement, interactions, harvesting, and combat.  
-  Utilizes **StatsComponent** for managing player attributes such as health and stamina.
+  <h2>Workflow</h2>
+  <h3>Inventory Management</h3>
+  <ul>
+    <li>Collect item &rarr; Spawn as <code>DroppedItem</code> &rarr; Player interaction &rarr; Added to <code>InventoryComponent</code> &rarr; UI (<code>InventoryWidget</code>) updated automatically.</li>
+  </ul>
+  <h3>Resource Harvesting</h3>
+  <ul>
+    <li>Interact with <code>TreeActor</code> &rarr; Apply damage via <code>DamageableInterface</code> &rarr; Resource depleted &rarr; Spawn <code>DroppedTreeLoot</code> &rarr; Collect loot &rarr; Inventory updated.</li>
+  </ul>
+  <h3>Player Stats Interaction</h3>
+  <ul>
+    <li>Player actions modify <code>StatsComponent</code> &rarr; Health/Stamina updated &rarr; UI and gameplay reflect changes dynamically.</li>
+  </ul>
+  <hr>
 
-- **FarmerController**  
-  Custom controller managing player input, camera systems, and interaction logic.
+  <h2>Roadmap</h2>
+  <ul>
+    <li>Crafting system.</li>
+    <li>Additional resource types (rocks, minerals).</li>
+    <li>Advanced combat mechanics with enemy AI.</li>
+    <li>Farming mechanics (crop planting, growth management).</li>
+    <li>UI/UX improvements with polished interactions.</li>
+    <li>Comprehensive audio integration (environment, actions, feedback).</li>
+  </ul>
+  <hr>
 
-### Game Management
-
-- **GM_Farm**  
-  Core gameplay manager responsible for maintaining overall game state, including player spawning and initialization.
-
-### Items & Resources
-
-- **ItemData**  
-  Data-driven approach defining properties for each in-game item, such as icons, stack limits, and interactions.
-
-- **DroppedItem / DroppedTreeLoot**  
-  Represents physical items spawned in-world, collectible by player interaction after harvesting or resource depletion.
-
-### Environment & Interaction
-
-- **TreeActor**  
-  Represents trees in-game, serving as harvestable resources.  
-  Implements the `DamageableInterface` to facilitate harvesting mechanics.
-
-- **DamageableInterface**  
-  Standardized interface for destructible or interactive resources, streamlining interaction logic.
-
-### Player Stats & Damage
-
-- **StatsComponent**  
-  Manages player-specific attributes including health, stamina, damage calculation, and healing.  
-  Notifies relevant systems when stats change, enabling dynamic gameplay and UI updates.
-
----
-
-## Class Reference
-
-| Class Name              | Description                                    |
-|-------------------------|------------------------------------------------|
-| **FarmerCharacter**     | Player pawn handling core gameplay mechanics.  |
-| **FarmerController**    | Manages input, camera controls, interactions.  |
-| **GM_Farm**             | GameMode handling game state and logic.        |
-| **InventoryComponent**  | Backend inventory management logic.            |
-| **InventoryWidget**     | Visual inventory UI for player interaction.    |
-| **InventorySlotWidget** | UI representation for single inventory slots.  |
-| **ItemData**            | Defines in-game item properties.               |
-| **TreeActor**           | Harvestable resource actor.                    |
-| **DroppedItem**         | Generic dropped collectible items.             |
-| **DroppedTreeLoot**     | Specific loot from tree harvesting.            |
-| **DamageableInterface** | Interface for destructible resources.          |
-| **StatsComponent**      | Manages player health, stamina, and effects.   |
-
----
-
-## Workflow
-
-### Inventory Management
-
-- Collect item → Spawn as `DroppedItem` → Player interaction → Added to `InventoryComponent` → UI (`InventoryWidget`) updated automatically.
-
-### Resource Harvesting
-
-- Interact with `TreeActor` → Apply damage via `DamageableInterface` → Resource depleted → Spawn `DroppedTreeLoot` → Collect loot → Inventory updated.
-
-### Player Stats Interaction
-
-- Player actions modify `StatsComponent` → Health/Stamina updated → UI and gameplay reflect changes dynamically.
-
----
-
-## Roadmap
-
-Upcoming enhancements:
-
-- Crafting system.
-- Additional resource types (rocks, minerals).
-- Advanced combat mechanics with enemy AI.
-- Farming mechanics (crop planting, growth management).
-- UI/UX improvements with polished interactions.
-- Comprehensive audio integration (environment, actions, feedback).
-
----
-
-## Contributing
-
-Contributions are welcome! Please submit pull requests or open issues directly on GitHub.
-
----
-
-_Last updated: July 30, 2025_
+  <h2>Contributing</h2>
+  <p>
+    Contributions are welcome! Please submit pull requests or open issues directly on GitHub.
+  </p>
+  <hr>
+  <p><em>Last updated: July 30, 2025</em></p>
+</body>
+</html>
