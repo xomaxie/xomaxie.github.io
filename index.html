@@ -18,7 +18,7 @@
 
   <h2>Overview</h2>
   <p>
-    Welcome to <strong>FEDoc</strong>, the official documentation for the Farming Game Engine built using <strong>Unreal Engine 5.6</strong> in <strong>C++</strong>.<br>
+    Welcome to <strong>FEDoc</strong>, the official documentation for the Farming Game Engine built using <strong>Unreal Engine 5.6</strong> in <strong>C++</strong>.
   </p>
   <hr>
 
@@ -34,7 +34,7 @@
   <h3>Player Character</h3>
   <ul>
     <li><strong>FarmerCharacter</strong>: Central pawn class for the player, integrating input handling for movement, interactions, harvesting, and combat. Utilizes <strong>StatsComponent</strong> for managing player attributes such as health and stamina.</li>
-    <li><strong>FarmerController</strong>: Custom controller managing player input, camera systems, and interaction logic.</li>
+    <li><strong>FarmerController</strong>: Custom controller managing player input, camera systems, and interaction logic. <b>Handles all farming input (till, plant, harvest, crop selection)</b>.</li>
   </ul>
 
   <h3>Game Management</h3>
@@ -60,6 +60,88 @@
   </ul>
   <hr>
 
+  <h2>Farming System (Crop & Grid)</h2>
+  <p>
+    The <b>Farming System</b> is fully <b>data-driven</b> and built around a grid of farm tiles managed by <code>AFarmManager</code>. All crop types are defined in a <b>DataTable</b> using the <code>FCropData</code> struct, allowing new crops to be added easily.
+  </p>
+  <h3>Key Classes & Structs</h3>
+  <ul>
+    <li>
+      <b>AFarmManager</b> (<code>AActor</code>): Owns a <code>FFarmGrid*</code> and exposes <b>BlueprintCallable</b> functions:
+      <ul>
+        <li><code>TryTillAtWorld(FVector WorldPos)</code> &mdash; Till a tile at the given world position.</li>
+        <li><code>TryPlantAtWorld(FVector WorldPos, FName CropRowName)</code> &mdash; Plant a crop (by RowName) at the position.</li>
+        <li><code>TryHarvestAtWorld(FVector WorldPos)</code> &mdash; Harvest a ready crop at the position.</li>
+        <li><code>CropDataTable</code> (settable in the editor) &mdash; DataTable of <code>FCropData</code> for all crop types.</li>
+      </ul>
+    </li>
+    <li>
+      <b>FFarmGrid</b>: Manages a 2D grid of <code>FFarmTileData</code> with per-tile logic.
+      <ul>
+        <li><code>GetTileAtWorldPos(FVector)</code>, <code>TryTillTile</code>, <code>PlantSeed</code>, <code>HarvestCrop</code>, <code>UpdateGrowth</code>.</li>
+        <li>Uses <code>CropRowName</code> on each tile for lookups.</li>
+      </ul>
+    </li>
+    <li>
+      <b>FFarmTileData</b> (<code>USTRUCT</code>): Holds per-tile state.
+      <ul>
+        <li><code>bool bIsTilled</code> &mdash; Is this tile tilled?</li>
+        <li><code>FName CropRowName</code> &mdash; DataTable row key of planted crop (empty if none).</li>
+        <li><code>int32 GrowthStage</code>, <code>float GrowthTime</code> &mdash; Crop progress.</li>
+        <li><code>bool bReadyToHarvest</code>, <code>bool bIsWatered</code>, <code>bool bIsFertilized</code>, <code>int32 CropQuality</code></li>
+      </ul>
+    </li>
+    <li>
+      <b>FCropData</b> (<code>USTRUCT</code>): Used as DataTable row struct.
+      <ul>
+        <li><code>FName RowName</code>, <code>FText DisplayName</code></li>
+        <li><code>UTexture2D* Icon</code>, <code>UStaticMesh* Mesh</code> <em>(for visuals, not used yet)</em></li>
+        <li><code>float TimeToGrow</code>, <code>int32 NumGrowthStages</code>, <code>int32 Yield</code></li>
+      </ul>
+    </li>
+    <li>
+      <b>AFarmerController</b> (<code>APlayerController</code>): Player input for farming.
+      <ul>
+        <li><code>TArray&lt;FName&gt; AvailableCropRows</code> &mdash; Populated from the CropDataTable.</li>
+        <li><code>FName SelectedCropRowName</code> &mdash; Current crop for planting.</li>
+        <li>
+          Handles:
+          <ul>
+            <li>Left click: till or plant.</li>
+            <li>Right click: harvest.</li>
+            <li>NextCrop: cycles crop selection (by DataTable rows).</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Farming Blueprint API</h3>
+  <ul>
+    <li><code>TryTillAtWorld(FVector WorldPos)</code> &mdash; Till tile at given location. Returns <code>bool</code>. (BlueprintCallable)</li>
+    <li><code>TryPlantAtWorld(FVector WorldPos, FName CropRowName)</code> &mdash; Plant crop (by RowName) at location. Returns <code>bool</code>. (BlueprintCallable)</li>
+    <li><code>TryHarvestAtWorld(FVector WorldPos)</code> &mdash; Harvest crop at location. Returns <code>bool</code>. (BlueprintCallable)</li>
+    <li><code>CropDataTable</code> (AFarmManager, <code>EditAnywhere</code>) &mdash; Set this to your crop DataTable in the Details panel.</li>
+    <li><code>AvailableCropRows</code> (AFarmerController, internal) &mdash; All valid crops, auto-populated from DataTable.</li>
+    <li><code>SelectedCropRowName</code> (AFarmerController, internal) &mdash; The currently-selected crop for planting.</li>
+  </ul>
+
+  <h3>How the Farming System Works</h3>
+  <ol>
+    <li><b>Initialization</b>: AFarmManager is placed in the level, and <b>CropDataTable</b> is set in the Details panel. The grid is auto-initialized.</li>
+    <li><b>Player Actions</b>:
+      <ul>
+        <li><b>Left Click</b>: Tills tile if not tilled; plants selected crop if tilled and empty.</li>
+        <li><b>Right Click</b>: Harvests crop if ready.</li>
+        <li><b>Next Crop</b>: Cycles the selection through all available DataTable crops.</li>
+      </ul>
+    </li>
+    <li><b>Growth</b>: Each tick, AFarmManager calls <code>UpdateGrowth</code> on the grid. Crop tiles increment their growth time and stage. (To be upgraded to use per-crop DataTable values.)</li>
+    <li><b>Harvest</b>: Harvested tiles reset, and future drops/yields will use the DataTable entry for that crop.</li>
+    <li><b>Adding Crops</b>: To add a new crop, add a row to the DataTable asset (based on FCropData). All new crops show up automatically.</li>
+  </ol>
+  <h4><b>Note:</b> Visuals for icons and meshes are not yet used in gameplay but are exposed for future expansion.</h4>
+  <hr>
+
   <h2>Class Reference</h2>
   <table>
     <tr>
@@ -67,7 +149,7 @@
       <th>Description</th>
     </tr>
     <tr><td><strong>FarmerCharacter</strong></td><td>Player pawn handling core gameplay mechanics.</td></tr>
-    <tr><td><strong>FarmerController</strong></td><td>Manages input, camera controls, interactions.</td></tr>
+    <tr><td><strong>FarmerController</strong></td><td>Handles input for farming, crop selection, and interactions.</td></tr>
     <tr><td><strong>GM_Farm</strong></td><td>GameMode handling game state and logic.</td></tr>
     <tr><td><strong>InventoryComponent</strong></td><td>Backend inventory management logic.</td></tr>
     <tr><td><strong>InventoryWidget</strong></td><td>Visual inventory UI for player interaction.</td></tr>
@@ -78,95 +160,42 @@
     <tr><td><strong>DroppedTreeLoot</strong></td><td>Specific loot from tree harvesting.</td></tr>
     <tr><td><strong>DamageableInterface</strong></td><td>Interface for destructible resources.</td></tr>
     <tr><td><strong>StatsComponent</strong></td><td>Manages player health, stamina, and effects.</td></tr>
+    <tr><td><strong>FarmManager</strong></td><td>Owns the farm grid and the crop DataTable. Handles till/plant/harvest calls from player and updates growth.</td></tr>
+    <tr><td><strong>FarmGrid</strong></td><td>Logic for a 2D array of farm tiles. All per-tile logic and world ↔ grid conversion.</td></tr>
+    <tr><td><strong>FarmTileData</strong></td><td>Per-tile state struct: tilled, planted crop, growth, fertilized, watered, quality, etc.</td></tr>
+    <tr><td><strong>CropData</strong></td><td>DataTable row struct: Display name, icon, mesh, growth time, stages, and yield for each crop.</td></tr>
   </table>
   <hr>
 
   <h2>Blueprint API</h2>
-
-  <h3>UInventoryComponent</h3>
+  <!-- Existing API... -->
+  <h3>AFarmManager</h3>
   <ul>
-    <li><code>AddItem(FName ItemID, int32 Count, bool bPreferHotbar = false)</code> - Adds an item by ID and count; can prefer hotbar. (Callable)</li>
-    <li><code>MoveItem(int32 FromIndex, int32 ToIndex)</code> - Swaps or moves items between slots (drag-and-drop support). (Callable)</li>
-    <li><code>ClearSlot(int32 SlotIndex)</code> - Clears the item and count from a given slot (hotbar or main inventory). (Callable)</li>
-    <li><code>SetInventorySlot(int32 Index, FName ItemID, int32 Count)</code> - Sets a specific main inventory slot. (Callable)</li>
-    <li><code>SetHotbarSlot(int32 Index, FName ItemID, int32 Count)</code> - Sets a specific hotbar slot. (Callable)</li>
-    <li><code>GetInventorySlots()</code> - Returns the main inventory slots array. (Callable, returns array)</li>
-    <li><code>GetHotbarSlots()</code> - Returns the hotbar slots array. (Callable, returns array)</li>
-    <li><code>GetInventorySlot(int32 Index)</code> - Gets data for a single main slot. (Callable, returns struct)</li>
-    <li><code>GetHotbarSlot(int32 Index)</code> - Gets data for a single hotbar slot. (Callable, returns struct)</li>
-    <li><code>Cheat_AddItem(FName ItemID, int32 Count)</code> - Cheat/debug: Add item instantly. (Callable)</li>
-    <li><code>Cheat_ListAllItems()</code> - Cheat/debug: Print all item info to log. (Callable)</li>
-    <li><code>InventorySlots</code> - The array of inventory slots. (Read Only, VisibleAnywhere)</li>
-    <li><code>HotbarSlots</code> - The array of hotbar slots. (Read Only, VisibleAnywhere)</li>
-    <li><code>NumInventorySlots</code> - How many main inventory slots (EditAnywhere)</li>
-    <li><code>NumHotbarSlots</code> - How many hotbar slots (EditAnywhere)</li>
-    <li><code>ItemDataTable</code> - The items data table. (EditAnywhere)</li>
-    <li><code>OnInventoryChanged</code> - Event fired when inventory is changed. (Assignable)</li>
+    <li><code>TryTillAtWorld(FVector WorldPos)</code> &mdash; Till the tile at a given world position. <b>(BlueprintCallable)</b></li>
+    <li><code>TryPlantAtWorld(FVector WorldPos, FName CropRowName)</code> &mdash; Plant crop by DataTable RowName. <b>(BlueprintCallable)</b></li>
+    <li><code>TryHarvestAtWorld(FVector WorldPos)</code> &mdash; Harvest crop at world position. <b>(BlueprintCallable)</b></li>
+    <li><code>CropDataTable</code> &mdash; Settable in editor. Assign your Crop DataTable (based on <code>FCropData</code>).</li>
   </ul>
-
-  <h3>FInventorySlot (Struct)</h3>
+  <h3>FCropData (DataTable Struct)</h3>
   <ul>
-    <li><code>ItemID</code> - The Item ID (FName) in this slot. (Read/Write)</li>
-    <li><code>Count</code> - Number of items in this slot. (Read/Write)</li>
+    <li><code>RowName</code> &mdash; DataTable key (automatically managed).</li>
+    <li><code>DisplayName</code> &mdash; Name for UI.</li>
+    <li><code>Icon</code> &mdash; Texture for UI (not used yet).</li>
+    <li><code>Mesh</code> &mdash; Static mesh for visuals (not used yet).</li>
+    <li><code>TimeToGrow</code> &mdash; Seconds to fully grow.</li>
+    <li><code>NumGrowthStages</code> &mdash; Number of visual/logic growth stages.</li>
+    <li><code>Yield</code> &mdash; Amount produced per harvest.</li>
   </ul>
-
-  <h3>UItemData</h3>
-  <ul>
-    <li><code>Name</code> - Item display name. (Read Only, EditAnywhere)</li>
-    <li><code>Icon</code> - Item icon texture. (Read Only, EditAnywhere)</li>
-    <li><code>MaxStackSize</code> - Max stack size. (Read Only, EditAnywhere)</li>
-    <li><code>Rarity</code> - Rarity (integer). (Read Only, EditAnywhere)</li>
-  </ul>
-
-  <h3>UStatsComponent</h3>
-  <ul>
-    <li><code>MaxHealth</code> - Maximum health. (Read Only)</li>
-    <li><code>Health</code> - Current health. (Read Only)</li>
-    <li><code>MaxStamina</code> - Maximum stamina. (Read Only)</li>
-    <li><code>Stamina</code> - Current stamina. (Read Only)</li>
-    <li><code>TakeDamage(float Amount)</code> - Damages the owner. (Callable)</li>
-    <li><code>Heal(float Amount)</code> - Heals the owner. (Callable)</li>
-    <li><code>UseStamina(float Amount)</code> - Uses stamina. (Callable)</li>
-  </ul>
-
-  <h3>AFarmerCharacter</h3>
-  <ul>
-    <li><code>InventoryComponent</code> - Inventory component (Read Only)</li>
-    <li><code>StatsComponent</code> - Stats component (Read Only)</li>
-    <li><code>Interact()</code> - Interact with world. (Callable)</li>
-    <li><code>Harvest()</code> - Harvest nearby resource. (Callable)</li>
-    <li><code>UseItem(UItemData* Item)</code> - Use an item. (Callable)</li>
-    <li><code>DropItem(UItemData* Item, int32 Quantity)</code> - Drop an item. (Callable)</li>
-  </ul>
-
-  <h3>ATreeActor</h3>
-  <ul>
-    <li><code>Health</code> - Tree’s current health (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>Mesh</code> - Static mesh (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>DropActorClass</code> - The class of actor to spawn as drop (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>DropSpawnOffset</code> - Drop spawn offset (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>LogsToDrop</code> - How many logs to drop (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>ReceiveDamage(float Amount)</code> - Applies damage (Implements <code>DamageableInterface</code>, Callable in BP via interface)</li>
-    <li><code>OnChoppedDown_BP()</code> - BlueprintImplementableEvent (BP: Play VFX, sound, etc on chop)</li>
-  </ul>
-
-  <h3>ADroppedItem</h3>
-  <ul>
-    <li><code>ItemID</code> - The row name of the item in the ItemData table. (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>Quantity</code> - Number of items in this pickup. (EditAnywhere, BlueprintReadWrite)</li>
-    <li><code>PickUp()</code> - Call to add this to inventory and destroy. (Callable, BPNativeEvent)</li>
-  </ul>
-
-  <h3>UInventorySlotWidget</h3>
-  <ul>
-    <li><code>SetSlotData(FInventorySlot)</code> - Set slot’s visual and logical data. (Callable from C++/BP)</li>
-    <li><code>SetParentInventoryWidget(UInventoryWidget*)</code> - Link slot to its parent inventory UI. (Callable)</li>
-    <li><code>NativeOnMouseButtonDown</code> - Handles mouse input for drag or split (shift+drag).</li>
-    <li><code>NativeOnDragDetected</code> - Initiates drag or split-drag (for stack splitting).</li>
-    <li><code>NativeOnDrop</code> - Handles drop (including stack splitting logic).</li>
-  </ul>
+  <hr>
 
   <h2>Workflow</h2>
+  <h3>Farming</h3>
+  <ol>
+    <li>Player clicks a tile with left mouse: if not tilled, tills it; if tilled, plants selected crop (using DataTable row name).</li>
+    <li>Right click: harvests crop if ready.</li>
+    <li>Tick: crop growth is updated, progressing toward harvestable state using tile and DataTable data.</li>
+    <li>Adding new crops: add a row in your CropDataTable (icon and mesh fields ready for future use).</li>
+  </ol>
   <h3>Inventory Management</h3>
   <ul>
     <li>Collect item &rarr; Spawn as <code>DroppedItem</code> &rarr; Player overlap &rarr; Added to <code>InventoryComponent</code> &rarr; UI (<code>InventoryWidget</code>) updated automatically. DroppedItem actor destroys itself on pickup success.</li>
@@ -184,10 +213,10 @@
 
   <h2>Roadmap</h2>
   <ul>
+    <li><b>Complete crop DataTable integration in growth logic.</b></li>
     <li>Crafting system.</li>
     <li>Additional resource types (rocks, minerals).</li>
     <li>Advanced combat mechanics with enemy AI.</li>
-    <li>Farming mechanics (crop planting, growth management).</li>
     <li>UI/UX improvements with polished interactions.</li>
     <li>Comprehensive audio integration (environment, actions, feedback).</li>
   </ul>
