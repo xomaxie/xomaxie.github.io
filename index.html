@@ -1,7 +1,118 @@
-<!DOCTYPE html>
-<html>
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
-</body>
-</html>
+# FEDoc - Farming Game Engine Documentation
+
+## Overview
+
+Welcome to **FEDoc**, the official documentation for the Farming Game Engine built using **Unreal Engine 5.6** in **C++**.  
+This engine powers a farming game focusing on inventory management, resource harvesting, player stats, and interactive environmental elements.
+
+---
+
+## Core Systems
+
+### Inventory System
+
+- **InventoryComponent**  
+  Manages inventory logic including adding, removing, and item stacking.  
+  Fires events on inventory changes to update UI.
+
+- **InventorySlot**  
+  Handles logic for item stacking and updating individual slots.
+
+- **InventoryWidget / InventorySlotWidget**  
+  Provides visual representation and interactive UI for inventory management.  
+  Supports drag-and-drop item movement and quick access.
+
+### Player Character
+
+- **FarmerCharacter**  
+  Central pawn class for the player, integrating input handling for movement, interactions, harvesting, and combat.  
+  Utilizes **StatsComponent** for managing player attributes such as health and stamina.
+
+- **FarmerController**  
+  Custom controller managing player input, camera systems, and interaction logic.
+
+### Game Management
+
+- **GM_Farm**  
+  Core gameplay manager responsible for maintaining overall game state, including player spawning and initialization.
+
+### Items & Resources
+
+- **ItemData**  
+  Data-driven approach defining properties for each in-game item, such as icons, stack limits, and interactions.
+
+- **DroppedItem / DroppedTreeLoot**  
+  Represents physical items spawned in-world, collectible by player interaction after harvesting or resource depletion.
+
+### Environment & Interaction
+
+- **TreeActor**  
+  Represents trees in-game, serving as harvestable resources.  
+  Implements the `DamageableInterface` to facilitate harvesting mechanics.
+
+- **DamageableInterface**  
+  Standardized interface for destructible or interactive resources, streamlining interaction logic.
+
+### Player Stats & Damage
+
+- **StatsComponent**  
+  Manages player-specific attributes including health, stamina, damage calculation, and healing.  
+  Notifies relevant systems when stats change, enabling dynamic gameplay and UI updates.
+
+---
+
+## Class Reference
+
+| Class Name              | Description                                    |
+|-------------------------|------------------------------------------------|
+| **FarmerCharacter**     | Player pawn handling core gameplay mechanics.  |
+| **FarmerController**    | Manages input, camera controls, interactions.  |
+| **GM_Farm**             | GameMode handling game state and logic.        |
+| **InventoryComponent**  | Backend inventory management logic.            |
+| **InventoryWidget**     | Visual inventory UI for player interaction.    |
+| **InventorySlotWidget** | UI representation for single inventory slots.  |
+| **ItemData**            | Defines in-game item properties.               |
+| **TreeActor**           | Harvestable resource actor.                    |
+| **DroppedItem**         | Generic dropped collectible items.             |
+| **DroppedTreeLoot**     | Specific loot from tree harvesting.            |
+| **DamageableInterface** | Interface for destructible resources.          |
+| **StatsComponent**      | Manages player health, stamina, and effects.   |
+
+---
+
+## Workflow
+
+### Inventory Management
+
+- Collect item → Spawn as `DroppedItem` → Player interaction → Added to `InventoryComponent` → UI (`InventoryWidget`) updated automatically.
+
+### Resource Harvesting
+
+- Interact with `TreeActor` → Apply damage via `DamageableInterface` → Resource depleted → Spawn `DroppedTreeLoot` → Collect loot → Inventory updated.
+
+### Player Stats Interaction
+
+- Player actions modify `StatsComponent` → Health/Stamina updated → UI and gameplay reflect changes dynamically.
+
+---
+
+## Roadmap
+
+Upcoming enhancements:
+
+- Crafting system.
+- Additional resource types (rocks, minerals).
+- Advanced combat mechanics with enemy AI.
+- Farming mechanics (crop planting, growth management).
+- UI/UX improvements with polished interactions.
+- Comprehensive audio integration (environment, actions, feedback).
+
+---
+
+## Contributing
+
+Contributions are welcome! Please submit pull requests or open issues directly on GitHub.
+
+---
+
+_Last updated: July 30, 2025_
