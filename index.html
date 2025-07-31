@@ -83,64 +83,74 @@
 
   <h2>Blueprint API</h2>
 
-<h3>UInventoryComponent</h3>
-<ul>
-  <li><code>AddItem(UItemData* Item, int32 Quantity)</code> - Adds an item to the inventory. (Callable)</li>
-  <li><code>RemoveItem(UItemData* Item, int32 Quantity)</code> - Removes an item from the inventory. (Callable)</li>
-  <li><code>HasItem(UItemData* Item, int32 Quantity)</code> - Checks if inventory contains an item. (Callable)</li>
-  <li><code>ClearInventory()</code> - Clears the inventory. (Callable)</li>
-  <li><code>GetItemCount(UItemData* Item)</code> - Gets the count of a specific item. (Callable)</li>
-  <li><code>InventorySlots</code> - The array of inventory slots. (Read Only)</li>
-</ul>
+  <h3>UInventoryComponent</h3>
+  <ul>
+    <li><code>AddItem(FName ItemID, int32 Count, bool bPreferHotbar = false)</code> - Adds an item by ID and count; can prefer hotbar. (Callable)</li>
+    <li><code>MoveItem(int32 FromIndex, int32 ToIndex)</code> - Swaps or moves items between slots (drag-and-drop support). (Callable)</li>
+    <li><code>ClearSlot(int32 SlotIndex)</code> - Clears the item and count from a given slot (hotbar or main inventory). (Callable)</li>
+    <li><code>SetInventorySlot(int32 Index, FName ItemID, int32 Count)</code> - Sets a specific main inventory slot. (Callable)</li>
+    <li><code>SetHotbarSlot(int32 Index, FName ItemID, int32 Count)</code> - Sets a specific hotbar slot. (Callable)</li>
+    <li><code>GetInventorySlots()</code> - Returns the main inventory slots array. (Callable, returns array)</li>
+    <li><code>GetHotbarSlots()</code> - Returns the hotbar slots array. (Callable, returns array)</li>
+    <li><code>GetInventorySlot(int32 Index)</code> - Gets data for a single main slot. (Callable, returns struct)</li>
+    <li><code>GetHotbarSlot(int32 Index)</code> - Gets data for a single hotbar slot. (Callable, returns struct)</li>
+    <li><code>Cheat_AddItem(FName ItemID, int32 Count)</code> - Cheat/debug: Add item instantly. (Callable)</li>
+    <li><code>Cheat_ListAllItems()</code> - Cheat/debug: Print all item info to log. (Callable)</li>
+    <li><code>InventorySlots</code> - The array of inventory slots. (Read Only, VisibleAnywhere)</li>
+    <li><code>HotbarSlots</code> - The array of hotbar slots. (Read Only, VisibleAnywhere)</li>
+    <li><code>NumInventorySlots</code> - How many main inventory slots (EditAnywhere)</li>
+    <li><code>NumHotbarSlots</code> - How many hotbar slots (EditAnywhere)</li>
+    <li><code>ItemDataTable</code> - The items data table. (EditAnywhere)</li>
+    <li><code>OnInventoryChanged</code> - Event fired when inventory is changed. (Assignable)</li>
+  </ul>
 
-<h3>FInventorySlot (Struct)</h3>
-<ul>
-  <li><code>ItemData</code> - The item in this slot. (Read/Write)</li>
-  <li><code>Quantity</code> - Number of items in this slot. (Read/Write)</li>
-</ul>
+  <h3>FInventorySlot (Struct)</h3>
+  <ul>
+    <li><code>ItemID</code> - The Item ID (FName) in this slot. (Read/Write)</li>
+    <li><code>Count</code> - Number of items in this slot. (Read/Write)</li>
+  </ul>
 
-<h3>UItemData</h3>
-<ul>
-  <li><code>Name</code> - Item display name. (Read Only, Edit Anywhere)</li>
-  <li><code>Icon</code> - Item icon texture. (Read Only, Edit Anywhere)</li>
-  <li><code>MaxStackSize</code> - Max stack size. (Read Only, Edit Anywhere)</li>
-  <li><code>Rarity</code> - Rarity (integer). (Read Only, Edit Anywhere)</li>
-</ul>
+  <h3>UItemData</h3>
+  <ul>
+    <li><code>Name</code> - Item display name. (Read Only, EditAnywhere)</li>
+    <li><code>Icon</code> - Item icon texture. (Read Only, EditAnywhere)</li>
+    <li><code>MaxStackSize</code> - Max stack size. (Read Only, EditAnywhere)</li>
+    <li><code>Rarity</code> - Rarity (integer). (Read Only, EditAnywhere)</li>
+  </ul>
 
-<h3>UStatsComponent</h3>
-<ul>
-  <li><code>MaxHealth</code> - Maximum health. (Read Only)</li>
-  <li><code>Health</code> - Current health. (Read Only)</li>
-  <li><code>MaxStamina</code> - Maximum stamina. (Read Only)</li>
-  <li><code>Stamina</code> - Current stamina. (Read Only)</li>
-  <li><code>TakeDamage(float Amount)</code> - Damages the owner. (Callable)</li>
-  <li><code>Heal(float Amount)</code> - Heals the owner. (Callable)</li>
-  <li><code>UseStamina(float Amount)</code> - Uses stamina. (Callable)</li>
-</ul>
+  <h3>UStatsComponent</h3>
+  <ul>
+    <li><code>MaxHealth</code> - Maximum health. (Read Only)</li>
+    <li><code>Health</code> - Current health. (Read Only)</li>
+    <li><code>MaxStamina</code> - Maximum stamina. (Read Only)</li>
+    <li><code>Stamina</code> - Current stamina. (Read Only)</li>
+    <li><code>TakeDamage(float Amount)</code> - Damages the owner. (Callable)</li>
+    <li><code>Heal(float Amount)</code> - Heals the owner. (Callable)</li>
+    <li><code>UseStamina(float Amount)</code> - Uses stamina. (Callable)</li>
+  </ul>
 
-<h3>AFarmerCharacter</h3>
-<ul>
-  <li><code>InventoryComponent</code> - Inventory component (Read Only)</li>
-  <li><code>StatsComponent</code> - Stats component (Read Only)</li>
-  <li><code>Interact()</code> - Interact with world. (Callable)</li>
-  <li><code>Harvest()</code> - Harvest nearby resource. (Callable)</li>
-  <li><code>UseItem(UItemData* Item)</code> - Use an item. (Callable)</li>
-  <li><code>DropItem(UItemData* Item, int32 Quantity)</code> - Drop an item. (Callable)</li>
-</ul>
+  <h3>AFarmerCharacter</h3>
+  <ul>
+    <li><code>InventoryComponent</code> - Inventory component (Read Only)</li>
+    <li><code>StatsComponent</code> - Stats component (Read Only)</li>
+    <li><code>Interact()</code> - Interact with world. (Callable)</li>
+    <li><code>Harvest()</code> - Harvest nearby resource. (Callable)</li>
+    <li><code>UseItem(UItemData* Item)</code> - Use an item. (Callable)</li>
+    <li><code>DropItem(UItemData* Item, int32 Quantity)</code> - Drop an item. (Callable)</li>
+  </ul>
 
-<h3>ATreeActor</h3>
-<ul>
-  <li><code>MaxHealth</code> - Tree’s max health (Read Only)</li>
-  <li><code>Health</code> - Tree’s current health (Read Only)</li>
-  <li><code>TakeDamage(int32 DamageAmount)</code> - Applies damage. (Callable)</li>
-</ul>
+  <h3>ATreeActor</h3>
+  <ul>
+    <li><code>MaxHealth</code> - Tree’s max health (Read Only)</li>
+    <li><code>Health</code> - Tree’s current health (Read Only)</li>
+    <li><code>TakeDamage(int32 DamageAmount)</code> - Applies damage. (Callable)</li>
+  </ul>
 
-<h3>ADroppedItem</h3>
-<ul>
-  <li><code>ItemData</code> - Item contained. (Read Only)</li>
-  <li><code>Quantity</code> - Number of items. (Read Only)</li>
-</ul>
-
+  <h3>ADroppedItem</h3>
+  <ul>
+    <li><code>ItemData</code> - Item contained. (Read Only)</li>
+    <li><code>Quantity</code> - Number of items. (Read Only)</li>
+  </ul>
 
   <h2>Workflow</h2>
   <h3>Inventory Management</h3>
