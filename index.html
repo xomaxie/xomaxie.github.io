@@ -28,7 +28,7 @@
   <ul>
     <li><strong>InventoryComponent</strong>: Manages inventory logic including adding, removing, clearing, and item stacking. Fires events on inventory changes to update UI.</li>
     <li><strong>InventorySlot</strong>: Handles logic for item stacking and updating individual slots.</li>
-    <li><strong>InventoryWidget / InventorySlotWidget</strong>: Provides visual representation and interactive UI for inventory management. Supports drag-and-drop item movement and quick access.</li>
+    <li><strong>InventoryWidget / InventorySlotWidget</strong>: Provides visual representation and interactive UI for inventory management. Supports drag-and-drop item movement, <b>shift-drag splitting</b>, and quick access.</li>
   </ul>
 
   <h3>Player Character</h3>
@@ -45,12 +45,12 @@
   <h3>Items & Resources</h3>
   <ul>
     <li><strong>ItemData</strong>: Data-driven approach defining properties for each in-game item, such as icons, stack limits, and interactions.</li>
-    <li><strong>DroppedItem / DroppedTreeLoot</strong>: Represents physical items spawned in-world, collectible by player interaction after harvesting or resource depletion.</li>
+    <li><strong>DroppedItem / DroppedTreeLoot</strong>: Represents physical items spawned in-world, collectible by player interaction after harvesting or resource depletion. <b>DroppedItem</b> supports dynamic quantity for bulk drops.</li>
   </ul>
 
   <h3>Environment & Interaction</h3>
   <ul>
-    <li><strong>TreeActor</strong>: Represents trees in-game, serving as harvestable resources. Implements the <code>DamageableInterface</code> to facilitate harvesting mechanics.</li>
+    <li><strong>TreeActor</strong>: Represents trees in-game, serving as harvestable resources. Implements the <code>DamageableInterface</code> to facilitate harvesting mechanics. <b>Supports custom drop amount and drop class via properties.</b></li>
     <li><strong>DamageableInterface</strong>: Standardized interface for destructible or interactive resources, streamlining interaction logic.</li>
   </ul>
 
@@ -71,10 +71,10 @@
     <tr><td><strong>GM_Farm</strong></td><td>GameMode handling game state and logic.</td></tr>
     <tr><td><strong>InventoryComponent</strong></td><td>Backend inventory management logic.</td></tr>
     <tr><td><strong>InventoryWidget</strong></td><td>Visual inventory UI for player interaction.</td></tr>
-    <tr><td><strong>InventorySlotWidget</strong></td><td>UI representation for single inventory slots.</td></tr>
+    <tr><td><strong>InventorySlotWidget</strong></td><td>UI representation for single inventory slots. Supports drag-and-drop and shift-drag for stack splitting.</td></tr>
     <tr><td><strong>ItemData</strong></td><td>Defines in-game item properties.</td></tr>
-    <tr><td><strong>TreeActor</strong></td><td>Harvestable resource actor.</td></tr>
-    <tr><td><strong>DroppedItem</strong></td><td>Generic dropped collectible items.</td></tr>
+    <tr><td><strong>TreeActor</strong></td><td>Harvestable resource actor. Customizable drop amount and actor class. Supports Blueprint drop events.</td></tr>
+    <tr><td><strong>DroppedItem</strong></td><td>Generic dropped collectible items, quantity can be set dynamically.</td></tr>
     <tr><td><strong>DroppedTreeLoot</strong></td><td>Specific loot from tree harvesting.</td></tr>
     <tr><td><strong>DamageableInterface</strong></td><td>Interface for destructible resources.</td></tr>
     <tr><td><strong>StatsComponent</strong></td><td>Manages player health, stamina, and effects.</td></tr>
@@ -141,9 +141,13 @@
 
   <h3>ATreeActor</h3>
   <ul>
-    <li><code>MaxHealth</code> - Tree’s max health (Read Only)</li>
-    <li><code>Health</code> - Tree’s current health (Read Only)</li>
-    <li><code>TakeDamage(int32 DamageAmount)</code> - Applies damage. (Callable)</li>
+    <li><code>Health</code> - Tree’s current health (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>Mesh</code> - Static mesh (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>DropActorClass</code> - The class of actor to spawn as drop (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>DropSpawnOffset</code> - Drop spawn offset (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>LogsToDrop</code> - How many logs to drop (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>ReceiveDamage(float Amount)</code> - Applies damage (Implements <code>DamageableInterface</code>, Callable in BP via interface)</li>
+    <li><code>OnChoppedDown_BP()</code> - BlueprintImplementableEvent (BP: Play VFX, sound, etc on chop)</li>
   </ul>
 
   <h3>ADroppedItem</h3>
@@ -153,14 +157,24 @@
     <li><code>PickUp()</code> - Call to add this to inventory and destroy. (Callable, BPNativeEvent)</li>
   </ul>
 
+  <h3>UInventorySlotWidget</h3>
+  <ul>
+    <li><code>SetSlotData(FInventorySlot)</code> - Set slot’s visual and logical data. (Callable from C++/BP)</li>
+    <li><code>SetParentInventoryWidget(UInventoryWidget*)</code> - Link slot to its parent inventory UI. (Callable)</li>
+    <li><code>NativeOnMouseButtonDown</code> - Handles mouse input for drag or split (shift+drag).</li>
+    <li><code>NativeOnDragDetected</code> - Initiates drag or split-drag (for stack splitting).</li>
+    <li><code>NativeOnDrop</code> - Handles drop (including stack splitting logic).</li>
+  </ul>
+
   <h2>Workflow</h2>
   <h3>Inventory Management</h3>
   <ul>
     <li>Collect item &rarr; Spawn as <code>DroppedItem</code> &rarr; Player overlap &rarr; Added to <code>InventoryComponent</code> &rarr; UI (<code>InventoryWidget</code>) updated automatically. DroppedItem actor destroys itself on pickup success.</li>
+    <li><b>Shift+Drag</b> inventory slot to split stack: drag half the stack to another slot, supporting intuitive stack management.</li>
   </ul>
   <h3>Resource Harvesting</h3>
   <ul>
-    <li>Interact with <code>TreeActor</code> &rarr; Apply damage via <code>DamageableInterface</code> &rarr; Resource depleted &rarr; Spawn <code>DroppedTreeLoot</code> &rarr; Collect loot &rarr; Inventory updated.</li>
+    <li>Interact with <code>TreeActor</code> &rarr; Apply damage via <code>DamageableInterface</code> &rarr; Resource depleted &rarr; Spawn <code>DroppedItem</code> (logs, variable amount) &rarr; Collect loot &rarr; Inventory updated.</li>
   </ul>
   <h3>Player Stats Interaction</h3>
   <ul>
@@ -184,6 +198,6 @@
     Fork the repository on GitHub, create a feature branch, and submit a pull request with your changes.
   </p>
   <hr>
-  <p><em>Last updated: July 30, 2025</em></p>
+  <p><em>Last updated: July 31, 2025</em></p>
 </body>
 </html>
