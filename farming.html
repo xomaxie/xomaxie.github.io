@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FEDoc - Farming System Reference</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; color: #1a1a1a; }
+    h1, h2, h3 { color: #1565c0; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #bbb; padding: 0.5rem; }
+    th { background: #e3f2fd; }
+    code { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; }
+    hr { margin: 2rem 0; }
+    .note { background: #f8fafc; border-left: 3px solid #1976d2; padding: 0.5rem 1rem; margin: 1rem 0; color: #333; }
+    /* Nav Bar Styles */
+    .fedoc-navbar {
+      background: linear-gradient(90deg, #1565c0 90%, #90caf9 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(21, 101, 192, 0.10);
+    }
+    .fedoc-navbar a {
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.07rem;
+      padding: 0.3rem 1.1rem;
+      border-radius: 8px;
+      transition: background 0.12s;
+    }
+    .fedoc-navbar a:hover, .fedoc-navbar a.active {
+      background: rgba(255,255,255,0.18);
+      color: #ffd740;
+    }
+    .fedoc-navbar .navbar-title {
+      font-size: 1.15rem;
+      letter-spacing: 0.03em;
+      margin-right: 2.5rem;
+      color: #ffd740;
+      text-shadow: 0 1px 0 #0d47a1;
+    }
+    @media (max-width: 700px) {
+      .fedoc-navbar { flex-direction: column; gap: 0.6rem; padding: 1rem; }
+      .fedoc-navbar .navbar-title { margin-right: 0; margin-bottom: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV BAR -->
+  <div class="fedoc-navbar">
+    <span class="navbar-title">FEDoc Navigation</span>
+    <a href="index.html">🏠 Home</a>
+    <a href="farming.html" class="active">🌱 Farming System</a>
+    <!-- Future: Add more links as you add new docs pages -->
+  </div>
+
+  <h1>FEDoc - Farming System Reference</h1>
+
+  <h2>Overview</h2>
+  <p>
+    The <b>Farming System</b> is a data-driven module for managing crops, soil, and grid-based farm gameplay in <strong>Unreal Engine 5.6</strong>. 
+    All crop types are defined via a DataTable, enabling easy expansion and designer-friendly workflow.
+  </p>
+  <hr>
+
+  <h2>Class & Struct Reference</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><strong>AFarmManager</strong></td>
+      <td>Placed actor that owns the farm grid, exposes farming API to gameplay, and holds the DataTable for all crops.</td>
+    </tr>
+    <tr>
+      <td><strong>FFarmGrid</strong></td>
+      <td>Lightweight C++ grid managing an array of <code>FFarmTileData</code>, handling all per-tile logic and grid ↔ world math.</td>
+    </tr>
+    <tr>
+      <td><strong>FFarmTileData</strong></td>
+      <td>Per-tile state: tilled, crop (by DataTable row), growth, water/fertilizer state, harvest/quality.</td>
+    </tr>
+    <tr>
+      <td><strong>FCropData</strong></td>
+      <td>DataTable struct: Display name, icon, mesh, growth time/stages, yield, and other designer-editable settings.</td>
+    </tr>
+    <tr>
+      <td><strong>AFarmerController</strong></td>
+      <td>Player controller for all farming actions, crop selection, and input-driven farm interactions.</td>
+    </tr>
+  </table>
+  <hr>
+
+  <h2>Key Properties & Blueprint API</h2>
+  <h3>AFarmManager</h3>
+  <ul>
+    <li><code>Grid</code> (FFarmGrid*): The grid instance (private logic, no BP exposure).</li>
+    <li><code>CropDataTable</code> (UDataTable*, <b>EditAnywhere</b>): Assign your <b>CropData</b> DataTable here in the editor for all crop definitions.</li>
+    <li>
+      <b>BlueprintCallable functions:</b>
+      <ul>
+        <li><code>TryTillAtWorld(FVector WorldPos)</code> &rarr; <b>bool</b>: Tills a tile at the world location if possible.</li>
+        <li><code>TryPlantAtWorld(FVector WorldPos, FName CropRowName)</code> &rarr; <b>bool</b>: Plants the selected crop at the world location (must be tilled and empty).</li>
+        <li><code>TryHarvestAtWorld(FVector WorldPos)</code> &rarr; <b>bool</b>: Harvests a crop at the location if ready.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>FFarmTileData (USTRUCT)</h3>
+  <ul>
+    <li><code>bool bIsTilled</code> – Is the soil tilled/prepared?</li>
+    <li><code>FName CropRowName</code> – Row name from CropDataTable ("" = empty).</li>
+    <li><code>int32 GrowthStage</code>, <code>float GrowthTime</code> – Crop progress tracking.</li>
+    <li><code>bool bIsWatered</code>, <code>bool bIsFertilized</code>, <code>bool bReadyToHarvest</code></li>
+    <li><code>int32 CropQuality</code> – Quality/grade of the crop, for future expansion.</li>
+  </ul>
+
+  <h3>FCropData (USTRUCT/DataTable Row)</h3>
+  <ul>
+    <li><code>FText DisplayName</code> – Designer-friendly name.</li>
+    <li><code>UTexture2D* Icon</code> – Crop icon (UI, not used in gameplay yet).</li>
+    <li><code>UStaticMesh* Mesh</code> – Crop mesh (for 3D visuals, not used yet).</li>
+    <li><code>float TimeToGrow</code> – Total time (seconds) from plant to harvest.</li>
+    <li><code>int32 NumGrowthStages</code> – Number of growth stages (for visuals/logic).</li>
+    <li><code>int32 Yield</code> – How much is produced per harvest.</li>
+    <!-- Add more here as you expand the struct! -->
+  </ul>
+  <div class="note">
+    <b>Designer Workflow:</b> Add or modify crops by editing the CropDataTable asset in the editor. All valid crops will be automatically available for planting.
+  </div>
+  <hr>
+
+  <h2>Player & Input Flow</h2>
+  <ul>
+    <li><strong>Crop selection:</strong> The controller keeps an array of valid Crop RowNames (from DataTable) and the currently-selected one (<code>SelectedCropRowName</code>).</li>
+    <li><strong>Left click:</strong> Raycasts under cursor. If not tilled, tills the tile; if tilled and empty, plants selected crop.</li>
+    <li><strong>Right click:</strong> Raycasts and attempts to harvest the crop (if ready).</li>
+    <li><strong>NextCrop input:</strong> Cycles <code>SelectedCropRowName</code> to the next DataTable row, updating planting behavior and UI feedback.</li>
+  </ul>
+  <hr>
+
+  <h2>FarmGrid Logic (FFarmGrid)</h2>
+  <ul>
+    <li>Holds a <b>Width x Height</b> array of <code>FFarmTileData</code>.</li>
+    <li>World position ↔ grid tile math handled by <code>WorldPosToTile</code> and <code>TileToWorldPos</code> functions.</li>
+    <li>
+      Core methods:
+      <ul>
+        <li><code>GetTile(int32 X, int32 Y)</code> / <code>GetTileAtWorldPos(FVector WorldPos)</code> – Fast access.</li>
+        <li><code>TryTillTile(FVector WorldPos)</code> – Tills, returns success.</li>
+        <li><code>PlantSeed(FVector WorldPos, FName CropRowName)</code> – Plants, returns success.</li>
+        <li><code>HarvestCrop(FVector WorldPos)</code> – Harvests and resets, returns success.</li>
+        <li><code>UpdateGrowth(float DeltaTime)</code> – Advances all crop timers and growth stages. <span style="color:#1976d2;"><b>(Roadmap: Use CropData Table for dynamic stage/growth times)</b></span></li>
+      </ul>
+    </li>
+  </ul>
+  <hr>
+
+  <h2>How the System Works</h2>
+  <ol>
+    <li><b>Initialization:</b> Place <b>AFarmManager</b> in level, assign CropDataTable in Details panel.</li>
+    <li><b>Grid:</b> 2D array of tiles initialized on BeginPlay.</li>
+    <li><b>Planting:</b> Player selects crop (from DataTable, not enum), clicks to till/plant.</li>
+    <li><b>Growth:</b> Each tick, <code>AFarmManager</code> ticks the grid; crops increment their growth time and advance stages automatically.</li>
+    <li><b>Harvesting:</b> Player right-clicks to harvest ready crops, tile is reset for new planting.</li>
+    <li><b>Adding Crops:</b> Add a new row in CropDataTable asset; it's instantly usable in-game.</li>
+    <li><b>Visuals:</b> Icon and Mesh fields are exposed and ready for use in UI and world meshes, but not yet used in code logic.</li>
+  </ol>
+  <hr>
+
+  <h2>Design & Extensibility</h2>
+  <ul>
+    <li>To add new crops: create/edit rows in the CropDataTable (in Editor).</li>
+    <li>For UI: Reference <code>Icon</code> for crop selection menus.</li>
+    <li>For 3D visuals: <code>Mesh</code> can be spawned per growth stage (roadmap feature).</li>
+    <li>Yield and TimeToGrow are fully designer-configurable per-crop.</li>
+  </ul>
+  <hr>
+
+  <h2>Example Usage</h2>
+  <ol>
+    <li>In the level, select the <b>FarmManager</b> actor and assign a CropDataTable (asset based on <code>FCropData</code>).</li>
+    <li>Play the game. Use <b>NextCrop</b> input to cycle crops. Left-click to till/plant, right-click to harvest.</li>
+    <li>All crops are referenced and planted by DataTable row name (<code>FName</code>), not enums.</li>
+    <li>Crops automatically appear in the selection list as long as they're present in the DataTable.</li>
+  </ol>
+
+  <hr>
+  <div class="note">
+    <b>Last updated: July 31, 2025</b>
+  </div>
+</body>
+</html>
