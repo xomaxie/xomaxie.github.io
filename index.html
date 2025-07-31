@@ -26,7 +26,7 @@
 
   <h3>Inventory System</h3>
   <ul>
-    <li><strong>InventoryComponent</strong>: Manages inventory logic including adding, removing, and item stacking. Fires events on inventory changes to update UI.</li>
+    <li><strong>InventoryComponent</strong>: Manages inventory logic including adding, removing, clearing, and item stacking. Fires events on inventory changes to update UI.</li>
     <li><strong>InventorySlot</strong>: Handles logic for item stacking and updating individual slots.</li>
     <li><strong>InventoryWidget / InventorySlotWidget</strong>: Provides visual representation and interactive UI for inventory management. Supports drag-and-drop item movement and quick access.</li>
   </ul>
@@ -148,14 +148,15 @@
 
   <h3>ADroppedItem</h3>
   <ul>
-    <li><code>ItemData</code> - Item contained. (Read Only)</li>
-    <li><code>Quantity</code> - Number of items. (Read Only)</li>
+    <li><code>ItemID</code> - The row name of the item in the ItemData table. (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>Quantity</code> - Number of items in this pickup. (EditAnywhere, BlueprintReadWrite)</li>
+    <li><code>PickUp()</code> - Call to add this to inventory and destroy. (Callable, BPNativeEvent)</li>
   </ul>
 
   <h2>Workflow</h2>
   <h3>Inventory Management</h3>
   <ul>
-    <li>Collect item &rarr; Spawn as <code>DroppedItem</code> &rarr; Player interaction &rarr; Added to <code>InventoryComponent</code> &rarr; UI (<code>InventoryWidget</code>) updated automatically.</li>
+    <li>Collect item &rarr; Spawn as <code>DroppedItem</code> &rarr; Player overlap &rarr; Added to <code>InventoryComponent</code> &rarr; UI (<code>InventoryWidget</code>) updated automatically. DroppedItem actor destroys itself on pickup success.</li>
   </ul>
   <h3>Resource Harvesting</h3>
   <ul>
