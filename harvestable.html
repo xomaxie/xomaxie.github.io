@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FEDoc - Harvestable System Reference</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; color: #1a1a1a; }
+    h1, h2, h3 { color: #1565c0; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #bbb; padding: 0.5rem; }
+    th { background: #e3f2fd; }
+    code { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; }
+    hr { margin: 2rem 0; }
+    /* --- DOC NAV --- */
+    .doc-nav {
+      background: linear-gradient(90deg, #1976d2 85%, #42a5f5 100%);
+      color: #fff;
+      padding: 1.1em 2em 1em 2em;
+      margin: -2rem -2rem 2.5rem -2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 2px 10px #1976d248;
+      display: flex;
+      align-items: center;
+      font-size: 1.12rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .doc-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      background: #1565c0;
+      border-radius: 1.25em;
+      padding: 0.35em 1.2em;
+      margin: 0 0.5em;
+      transition: background 0.15s, box-shadow 0.12s;
+      box-shadow: 0 1px 8px #1976d233;
+      border: 2px solid #fff2;
+    }
+    .doc-nav a:hover, .doc-nav a:focus {
+      background: #fff;
+      color: #1565c0;
+      box-shadow: 0 3px 18px #1976d250;
+      border-color: #90caf9;
+      outline: none;
+      text-decoration: none;
+    }
+    .doc-nav .nav-label {
+      margin-right: 1.5em;
+      font-weight: bold;
+      font-size: 1.15em;
+      letter-spacing: 2px;
+      opacity: 0.85;
+    }
+    .note {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      padding: 1em 1.5em;
+      margin: 2em 0 1em 0;
+      border-radius: 12px;
+      color: #234;
+      font-size: 1.06em;
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-nav" role="navigation">
+    <span class="nav-label">📑 Docs:</span>
+    <a href="index.html">🏠 Home</a>
+    <a href="farming.html">🌱 Farming System</a>
+    <a href="harvestable.html">⛏️ Harvestables</a>
+    <!-- Add more links here as new docs/pages are created -->
+  </div>
+
+  <h1>FEDoc - Harvestable System Reference</h1>
+
+  <h2>Overview</h2>
+  <p>
+    The <b>Harvestable System</b> provides a flexible, designer-friendly way to create any gatherable resource (rocks, trees, ores, etc.) in <b>Unreal Engine 5.6</b>.
+    All harvestable actors derive from a common C++ base, supporting dynamic health, customizable drops, and Blueprint integration for expansion.
+  </p>
+  <hr>
+
+  <h2>Class Reference</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><strong>AHarvestableActor</strong></td>
+      <td>
+        Abstract C++ base for all harvestable world resources. Handles health, damage, and item spawning when harvested.<br>
+        Designed for extension via inheritance and Blueprint.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>ADroppedItem</strong></td>
+      <td>
+        The default pickup actor dropped by harvestables (see <a href="droppeditem.html">Dropped Item Doc</a>). Supports item ID, quantity, collision, and pickup logic.
+      </td>
+    </tr>
+  </table>
+  <hr>
+
+  <h2>Key Properties & Blueprint API</h2>
+  <h3>AHarvestableActor</h3>
+  <ul>
+    <li><code>Mesh</code> (<b>UStaticMeshComponent*</b>, <b>VisibleAnywhere</b>): The visible mesh for this resource.</li>
+    <li><code>MaxHealth</code> (<b>float</b>, <b>EditDefaultsOnly</b>): How much damage this harvestable can take before being harvested/destroyed.</li>
+    <li><code>Health</code> (<b>float</b>, <b>EditAnywhere</b>): Current health. Initialized to MaxHealth at spawn.</li>
+    <li><code>DropActorClass</code> (<b>TSubclassOf&lt;AActor&gt;</b>, <b>EditDefaultsOnly</b>): What to spawn when fully harvested (e.g. ADroppedItem or a Blueprint subclass).</li>
+    <li><code>DropItemID</code> (<b>FName</b>, <b>EditDefaultsOnly</b>): DataTable row name to assign to the dropped item (for inventory systems).</li>
+    <li><code>DropQuantity</code> (<b>int32</b>, <b>EditAnywhere</b>): How many of the item to spawn (sets <code>Quantity</code> on <code>ADroppedItem</code>).</li>
+    <li><code>DropSpawnOffset</code> (<b>FVector</b>, <b>EditDefaultsOnly</b>): Offset from actor location for dropped item spawn position.</li>
+    <li>
+      <b>BlueprintCallable:</b>
+      <ul>
+        <li><code>ReceiveDamage(float Amount)</code> – Applies damage. Calls <code>OnHarvested()</code> if health reaches zero.</li>
+      </ul>
+    </li>
+    <li>
+      <b>BlueprintNativeEvent:</b>
+      <ul>
+        <li><code>OnHarvested()</code> – Called when health reaches zero. Handles drop logic. Override in BP or C++ for custom behavior.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Harvest/Drop Flow</h3>
+  <ol>
+    <li>Player or tool calls <code>ReceiveDamage()</code> on a harvestable actor.</li>
+    <li>When <code>Health</code> falls to zero or below, <code>OnHarvested()</code> triggers.</li>
+    <li><code>DropActorClass</code> is spawned at the actor's location plus <code>DropSpawnOffset</code>.</li>
+    <li>If the spawned actor is an <code>ADroppedItem</code>, <code>DropQuantity</code> and <code>DropItemID</code> are set automatically.</li>
+    <li>Harvestable destroys itself.</li>
+  </ol>
+
+  <hr>
+
+  <h2>Example Usage</h2>
+  <ol>
+    <li>Create a new Blueprint inheriting from <b>AHarvestableActor</b> (e.g., BP_Tree, BP_Rock).</li>
+    <li>Set the <code>Mesh</code> and tweak <code>MaxHealth</code>, <code>DropActorClass</code>, <code>DropItemID</code>, and <code>DropQuantity</code> as needed in the Blueprint editor.</li>
+    <li>Place the Blueprint in the world.</li>
+    <li>Call <code>ReceiveDamage()</code> (via tool, weapon, or player) to begin harvesting.</li>
+    <li>When destroyed, the specified dropped item will spawn with the correct item ID and quantity.</li>
+  </ol>
+
+  <hr>
+
+  <h2>Design & Extensibility</h2>
+  <ul>
+    <li>Derive new harvestable types by subclassing <b>AHarvestableActor</b> in C++ or Blueprint.</li>
+    <li>Override <code>OnHarvested()</code> for special drops (multiple items, rare drops, VFX, etc).</li>
+    <li>Integrate with any inventory system by using DataTable-driven item IDs and drop logic.</li>
+    <li>Designer workflow: All core behavior is exposed to Blueprints for rapid iteration.</li>
+  </ul>
+  <hr>
+
+  <h2>Header Reference</h2>
+  <pre><code>#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "HarvestableActor.generated.h"
+
+UCLASS(Abstract)
+class FARMVILLE_API AHarvestableActor : public AActor
+{
+    GENERATED_BODY()
+
+public:
+    AHarvestableActor();
+
+    UFUNCTION(BlueprintCallable, Category = "Harvestable")
+    virtual void ReceiveDamage(float Amount);
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Harvestable")
+    void OnHarvested();
+    virtual void OnHarvested_Implementation();
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Harvestable")
+    UStaticMeshComponent* Mesh;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Harvestable")
+    float MaxHealth;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvestable")
+    float Health;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Harvestable")
+    TSubclassOf&lt;AActor&gt; DropActorClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Harvestable")
+    FName DropItemID;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvestable")
+    int32 DropQuantity;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Harvestable")
+    FVector DropSpawnOffset;
+
+protected:
+    virtual void BeginPlay() override;
+};</code></pre>
+
+  <div class="note">
+    <b>Designer Note:</b> All properties can be set per-harvestable in Blueprints or C++ child classes for max flexibility.
+  </div>
+
+  <hr>
+  <div class="note">
+    <b>Last updated: July 31, 2025</b>
+  </div>
+</body>
+</html>
