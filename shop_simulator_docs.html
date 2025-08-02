@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FEDoc - Shop Simulator Reference</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; color: #1a1a1a; }
+    h1, h2, h3 { color: #1565c0; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #bbb; padding: 0.5rem; }
+    th { background: #e3f2fd; }
+    code { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; }
+    hr { margin: 2rem 0; }
+    /* --- DOC NAV --- */
+    .doc-nav {
+      background: linear-gradient(90deg, #1976d2 85%, #42a5f5 100%);
+      color: #fff;
+      padding: 1.1em 2em 1em 2em;
+      margin: -2rem -2rem 2.5rem -2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 2px 10px #1976d248;
+      display: flex;
+      align-items: center;
+      font-size: 1.12rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .doc-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      background: #1565c0;
+      border-radius: 1.25em;
+      padding: 0.35em 1.2em;
+      margin: 0 0.5em;
+      transition: background 0.15s, box-shadow 0.12s;
+      box-shadow: 0 1px 8px #1976d233;
+      border: 2px solid #fff2;
+    }
+    .doc-nav a:hover, .doc-nav a:focus {
+      background: #fff;
+      color: #1565c0;
+      box-shadow: 0 3px 18px #1976d250;
+      border-color: #90caf9;
+      outline: none;
+      text-decoration: none;
+    }
+    .doc-nav .nav-label {
+      margin-right: 1.5em;
+      font-weight: bold;
+      font-size: 1.15em;
+      letter-spacing: 2px;
+      opacity: 0.85;
+    }
+    .note {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      padding: 1em 1.5em;
+      margin: 2em 0 1em 0;
+      border-radius: 12px;
+      color: #234;
+      font-size: 1.06em;
+    }
+    .code-block {
+      background: #f5f5f5;
+      color: #2a2a2a;
+      border-radius: 7px;
+      padding: 1em;
+      overflow-x: auto;
+      font-size: 1em;
+      margin-bottom: 2em;
+    }
+    ol li { margin-bottom: 0.6em; }
+    ul li { margin-bottom: 0.3em; }
+  </style>
+</head>
+<body>
+  <div class="doc-nav" role="navigation">
+    <span class="nav-label">📑 Docs:</span>
+    <a href="index.html">🏠 Home</a>
+    <a href="farming.html">🌱 Farming System</a>
+    <a href="harvestable.html">⛏️ Harvestables</a>
+    <a href="shop_simulator_docs.html">🛒 Shop Simulator</a>
+  </div>
+
+  <h1>FEDoc - Shop Simulator Game Documentation</h1>
+
+  <h2>Overview</h2>
+  <p>
+    This document describes the architecture and flow for the <strong>Shop Simulator</strong> system, a general shop game where the player buys items from adventurers, sells to customers, and manages their own inventory and shop layout in <strong>Unreal Engine 5.6 (C++)</strong>.
+  </p>
+  <hr>
+
+  <h2>Class List</h2>
+  <div class="code-block">
+Core/Game Systems
+- AShopSimulatorGameMode
+- AShopSimulatorPlayerController
+- UGameTimeSubsystem
+
+Shop & Inventory
+- AShopBuilding
+- UShopInventoryComponent
+- APlaceableFurnitureActor
+- UItemStorageComponent
+
+Item System
+- UItemDataAsset
+- FShopItemStack
+
+Adventurer/Customer System
+- AAdventurerNPC
+- UAdventurerLootComponent
+- UAdventurerDialogueComponent
+
+Shopping System
+- ACashRegisterActor
+- UPurchaseIntentComponent
+
+Supply Ordering System
+- AComputerTerminalActor
+- UStockOrderComponent
+- UStockDeliveryManagerSubsystem
+
+Player Systems
+- AShopPlayerCharacter
+- UInteractComponent
+- UPlacementModeComponent
+
+Save & Progression
+- UShopSaveGame
+- UShopProgressionComponent
+
+Optional/Advanced Systems
+- UItemConditionComponent
+- UAdventurerFactionComponent
+- UItemEnchantmentComponent
+- UItemIdentifyComponent
+- UShopReputationManager
+- UItemDisplayComponent
+- UEventManagerSubsystem
+  </div>
+
+  <h2>Class Hierarchy / Game Structure</h2>
+  <div class="code-block">
+AShopSimulatorGameMode
+│
+├── UGameTimeSubsystem
+├── UStockDeliveryManagerSubsystem
+├── UShopReputationManager           (optional)
+│
+├── AShopBuilding
+│    ├── UShopInventoryComponent
+│    ├── UShopProgressionComponent
+│    ├── APlaceableFurnitureActor    (multiple, children of AShopBuilding)
+│    │     └── UItemStorageComponent
+│    │
+│    ├── ACashRegisterActor          (child actor)
+│    └── AComputerTerminalActor      (child actor)
+│           └── UStockOrderComponent
+│
+├── AShopPlayerCharacter
+│    ├── UShopInventoryComponent
+│    ├── UInteractComponent
+│    └── UPlacementModeComponent
+│
+├── AAdventurerNPC                   (spawned dynamically)
+│    ├── UAdventurerLootComponent
+│    ├── UAdventurerDialogueComponent
+│    └── UPurchaseIntentComponent
+│
+├── UItemDataAsset                   (data only, used by inventory/storage/loot)
+├── UShopSaveGame                    (save system)
+└── FShopItemStack                   (used by inventory/storage/etc.)
+  </div>
+
+  <h2>Game Flow</h2>
+  <ol>
+    <li>
+      <strong>Game Start / Day Begin</strong>
+      <ul>
+        <li>Load save or start new game</li>
+        <li>Initialize shop (AShopBuilding), player (AShopPlayerCharacter), and all inventory/components</li>
+        <li>Set current day, time, shop funds, and any pending supply deliveries</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Open Shop</strong>
+      <ul>
+        <li>Player can place/arrange furniture and shelves</li>
+        <li>Stock items from shop inventory onto shelves</li>
+        <li>Order new stock via the computer</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Adventurer Arrival &amp; Selling</strong>
+      <ul>
+        <li>At intervals, spawn AAdventurerNPCs with random loot</li>
+        <li>Adventurers may offer to sell loot to player or browse/shop</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Shop Management Loop</strong>
+      <ul>
+        <li>Player interacts with adventurers (buy/sell, negotiate)</li>
+        <li>Adventurers buy items from shelves if conditions are met</li>
+        <li>Customers proceed to checkout</li>
+        <li>Player manages/restocks shelves, arranges shop, orders supplies</li>
+        <li>Supply deliveries arrive after a delay</li>
+      </ul>
+    </li>
+    <li>
+      <strong>End of Day</strong>
+      <ul>
+        <li>At closing time, all customers leave, shop closes</li>
+        <li>Game saves progress</li>
+        <li>Profit/loss, customer satisfaction, reputation calculated</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Progression &amp; Upgrades</strong>
+      <ul>
+        <li>Spend earnings to unlock new furniture, expand shop, improve reputation</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Next Day</strong>
+      <ul>
+        <li>Advance to next day; repeat from "Open Shop"</li>
+      </ul>
+    </li>
+  </ol>
+  <h3>Optional/Advanced Events (Anytime)</h3>
+  <ul>
+    <li>Random events (theft, VIP, inspections, festivals)</li>
+    <li>Special orders or rare supply deliveries</li>
+    <li>Upgrades or shop renovations</li>
+  </ul>
+
+  <hr>
+  <p><em>Last updated: August 2, 2025</em></p>
+</body>
+</html>
