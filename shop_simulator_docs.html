@@ -11,7 +11,6 @@
     th { background: #e3f2fd; }
     code { background: #f5f5f5; padding: 2px 4px; border-radius: 4px; }
     hr { margin: 2rem 0; }
-    /* --- DOC NAV --- */
     .doc-nav {
       background: linear-gradient(90deg, #1976d2 85%, #42a5f5 100%);
       color: #fff;
@@ -65,10 +64,12 @@
       background: #f5f5f5;
       color: #2a2a2a;
       border-radius: 7px;
-      padding: 1em;
+      padding: 1.1em 1.4em 1.1em 1.4em;
       overflow-x: auto;
-      font-size: 1em;
-      margin-bottom: 2em;
+      font-size: 1.09em;
+      margin-bottom: 2.5em;
+      white-space: pre;
+      line-height: 2.1em;
     }
     ol li { margin-bottom: 0.6em; }
     ul li { margin-bottom: 0.3em; }
@@ -93,85 +94,138 @@
 
   <h2>Class List</h2>
   <div class="code-block">
-Core/Game Systems
-- AShopSimulatorGameMode
-- AShopSimulatorPlayerController
-- UGameTimeSubsystem
+Core / Game Systems
+
+    AShopSimulatorGameMode
+
+    AShopSimulatorPlayerController
+
+    UGameTimeSubsystem
+
 
 Shop & Inventory
-- AShopBuilding
-- UShopInventoryComponent
-- APlaceableFurnitureActor
-- UItemStorageComponent
+
+    AShopBuilding
+
+    UShopInventoryComponent
+
+    APlaceableFurnitureActor
+
+    UItemStorageComponent
+
 
 Item System
-- UItemDataAsset
-- FShopItemStack
 
-Adventurer/Customer System
-- AAdventurerNPC
-- UAdventurerLootComponent
-- UAdventurerDialogueComponent
+    UItemDataAsset
+
+    FShopItemStack
+
+
+Adventurer / Customer System
+
+    AAdventurerNPC
+
+    UAdventurerLootComponent
+
+    UAdventurerDialogueComponent
+
 
 Shopping System
-- ACashRegisterActor
-- UPurchaseIntentComponent
+
+    ACashRegisterActor
+
+    UPurchaseIntentComponent
+
 
 Supply Ordering System
-- AComputerTerminalActor
-- UStockOrderComponent
-- UStockDeliveryManagerSubsystem
+
+    AComputerTerminalActor
+
+    UStockOrderComponent
+
+    UStockDeliveryManagerSubsystem
+
 
 Player Systems
-- AShopPlayerCharacter
-- UInteractComponent
-- UPlacementModeComponent
+
+    AShopPlayerCharacter
+
+    UInteractComponent
+
+    UPlacementModeComponent
+
 
 Save & Progression
-- UShopSaveGame
-- UShopProgressionComponent
 
-Optional/Advanced Systems
-- UItemConditionComponent
-- UAdventurerFactionComponent
-- UItemEnchantmentComponent
-- UItemIdentifyComponent
-- UShopReputationManager
-- UItemDisplayComponent
-- UEventManagerSubsystem
+    UShopSaveGame
+
+    UShopProgressionComponent
+
+
+Optional / Advanced Systems
+
+    UItemConditionComponent
+
+    UAdventurerFactionComponent
+
+    UItemEnchantmentComponent
+
+    UItemIdentifyComponent
+
+    UShopReputationManager
+
+    UItemDisplayComponent
+
+    UEventManagerSubsystem
   </div>
 
   <h2>Class Hierarchy / Game Structure</h2>
   <div class="code-block">
 AShopSimulatorGameMode
-│
-├── UGameTimeSubsystem
-├── UStockDeliveryManagerSubsystem
-├── UShopReputationManager           (optional)
-│
-├── AShopBuilding
-│    ├── UShopInventoryComponent
-│    ├── UShopProgressionComponent
-│    ├── APlaceableFurnitureActor    (multiple, children of AShopBuilding)
-│    │     └── UItemStorageComponent
-│    │
-│    ├── ACashRegisterActor          (child actor)
-│    └── AComputerTerminalActor      (child actor)
-│           └── UStockOrderComponent
-│
-├── AShopPlayerCharacter
-│    ├── UShopInventoryComponent
-│    ├── UInteractComponent
-│    └── UPlacementModeComponent
-│
-├── AAdventurerNPC                   (spawned dynamically)
-│    ├── UAdventurerLootComponent
-│    ├── UAdventurerDialogueComponent
-│    └── UPurchaseIntentComponent
-│
-├── UItemDataAsset                   (data only, used by inventory/storage/loot)
-├── UShopSaveGame                    (save system)
-└── FShopItemStack                   (used by inventory/storage/etc.)
+
+    ├─ UGameTimeSubsystem
+
+    ├─ UStockDeliveryManagerSubsystem
+
+    ├─ UShopReputationManager              (optional)
+
+    ├─ AShopBuilding
+
+    │     ├─ UShopInventoryComponent
+
+    │     ├─ UShopProgressionComponent
+
+    │     ├─ APlaceableFurnitureActor      (multiple, children of AShopBuilding)
+
+    │     │     └─ UItemStorageComponent
+
+    │     ├─ ACashRegisterActor            (child actor)
+
+    │     └─ AComputerTerminalActor        (child actor)
+
+    │             └─ UStockOrderComponent
+
+    ├─ AShopPlayerCharacter
+
+    │     ├─ UShopInventoryComponent
+
+    │     ├─ UInteractComponent
+
+    │     └─ UPlacementModeComponent
+
+    ├─ AAdventurerNPC                      (spawned dynamically)
+
+    │     ├─ UAdventurerLootComponent
+
+    │     ├─ UAdventurerDialogueComponent
+
+    │     └─ UPurchaseIntentComponent
+
+    ├─ UItemDataAsset                      (data only, used by inventory/storage/loot)
+
+    ├─ UShopSaveGame                       (save system)
+
+    └─ FShopItemStack                      (used by inventory/storage/etc.)
   </div>
 
   <h2>Game Flow</h2>
@@ -180,7 +234,7 @@ AShopSimulatorGameMode
       <strong>Game Start / Day Begin</strong>
       <ul>
         <li>Load save or start new game</li>
-        <li>Initialize shop (AShopBuilding), player (AShopPlayerCharacter), and all inventory/components</li>
+        <li>Initialize shop (<code>AShopBuilding</code>), player (<code>AShopPlayerCharacter</code>), and all inventory/components</li>
         <li>Set current day, time, shop funds, and any pending supply deliveries</li>
       </ul>
     </li>
@@ -195,7 +249,7 @@ AShopSimulatorGameMode
     <li>
       <strong>Adventurer Arrival &amp; Selling</strong>
       <ul>
-        <li>At intervals, spawn AAdventurerNPCs with random loot</li>
+        <li>At intervals, spawn <code>AAdventurerNPC</code>s with random loot</li>
         <li>Adventurers may offer to sell loot to player or browse/shop</li>
       </ul>
     </li>
