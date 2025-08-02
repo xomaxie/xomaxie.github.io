@@ -181,52 +181,35 @@ Optional / Advanced Systems
 
   <h2>Class Hierarchy / Game Structure</h2>
   <div class="code-block">
-AShopSimulatorGameMode
-
-    ├─ UGameTimeSubsystem
-
-    ├─ UStockDeliveryManagerSubsystem
-
-    ├─ UShopReputationManager              (optional)
-
-    ├─ AShopBuilding
-
-    │     ├─ UShopInventoryComponent
-
-    │     ├─ UShopProgressionComponent
-
-    │     ├─ APlaceableFurnitureActor      (multiple, children of AShopBuilding)
-
-    │     │     └─ UItemStorageComponent
-
-    │     ├─ ACashRegisterActor            (child actor)
-
-    │     └─ AComputerTerminalActor        (child actor)
-
-    │             └─ UStockOrderComponent
-
-    ├─ AShopPlayerCharacter
-
-    │     ├─ UShopInventoryComponent
-
-    │     ├─ UInteractComponent
-
-    │     └─ UPlacementModeComponent
-
-    ├─ AAdventurerNPC                      (spawned dynamically)
-
-    │     ├─ UAdventurerLootComponent
-
-    │     ├─ UAdventurerDialogueComponent
-
-    │     └─ UPurchaseIntentComponent
-
-    ├─ UItemDataAsset                      (data only, used by inventory/storage/loot)
-
-    ├─ UShopSaveGame                       (save system)
-
-    └─ FShopItemStack                      (used by inventory/storage/etc.)
-  </div>
+    AShopSimulatorGameMode
+     │
+     ├── UGameTimeSubsystem
+     ├── UStockDeliveryManagerSubsystem
+     ├── UShopReputationManager (optional)
+     │
+     ├── AShopBuilding
+     │   ├── UShopInventoryComponent
+     │   ├── UShopProgressionComponent
+     │   ├── APlaceableFurnitureActor (multiple, children of AShopBuilding)
+     │   │   └── UItemStorageComponent
+     │   ├── ACashRegisterActor (child actor)
+     │   └── AComputerTerminalActor (child actor)
+     │       └── UStockOrderComponent
+     │
+     ├── AShopPlayerCharacter
+     │   ├── UShopInventoryComponent
+     │   ├── UInteractComponent
+     │   └── UPlacementModeComponent
+     │
+     ├── AAdventurerNPC (spawned dynamically)
+     │   ├── UAdventurerLootComponent
+     │   ├── UAdventurerDialogueComponent
+     │   └── UPurchaseIntentComponent
+     │
+     ├── UItemDataAsset (data only, used by inventory/storage/loot)
+     ├── UShopSaveGame (save system)
+     └── FShopItemStack (used by inventory/storage/etc.)
+      </div>
 
   <h2>Game Flow</h2>
   <ol>
