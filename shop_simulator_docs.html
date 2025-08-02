@@ -230,7 +230,109 @@
       <td>Optional: Triggers random or scheduled events, e.g. theft, festivals, VIPs, or disasters.</td>
     </tr>
   </table>
-
+  <div style="font-family: 'Segoe UI', Arial, sans-serif; margin: 1em 0; color: #1a1a1a;">
+    <h2>Shop Simulator: Input Mapping Reference (PC Only)</h2>
+  
+    <h3>Player Movement</h3>
+    <ul>
+      <li><b>MoveForward</b> (Axis, value: +1 forward, -1 back) — W (+1), S (‑1), Up/Down Arrow</li>
+      <li><b>MoveRight</b> (Axis, value: +1 right, -1 left) — D (+1), A (‑1), Left/Right Arrow</li>
+    </ul>
+  
+    <h3>Camera Control</h3>
+    <ul>
+      <li><b>Turn</b> (Axis, value: mouse delta X) — Mouse X (left/right camera rotation/yaw)</li>
+      <li><b>LookUp</b> (Axis, value: mouse delta Y) — Mouse Y (up/down camera pitch)</li>
+      <li><b>ZoomCamera</b> (Axis, value: +1 zoom in, -1 zoom out) — Mouse Wheel Up (+1), Mouse Wheel Down (‑1)</li>
+    </ul>
+  
+    <h3>Basic Actions</h3>
+    <ul>
+      <li><b>Interact</b> (Action) — E</li>
+      <li><b>Cancel/Back</b> (Action) — Esc or Right Mouse Button</li>
+      <li><b>OpenInventory</b> (Action) — I or Tab</li>
+      <li><b>OpenShopMenu</b> (Action) — M</li>
+      <li><b>OpenOrderComputer</b> (Action) — O</li>
+      <li><b>PauseGame</b> (Action) — Escape</li>
+    </ul>
+  
+    <h3>Placement/Build Mode</h3>
+    <ul>
+      <li><b>TogglePlacementMode</b> (Action) — F or Q or Middle Mouse Button</li>
+      <li><b>PlaceFurniture</b> (Action) — Left Mouse Button</li>
+      <li><b>RotateFurniture</b> (Action) — R or Mouse Wheel Click</li>
+      <li><b>CancelPlacement</b> (Action) — Right Mouse Button or Escape</li>
+      <li><b>DeleteFurniture</b> (Action) — Delete or X (when selected)</li>
+    </ul>
+  
+    <h3>UI Navigation</h3>
+    <ul>
+      <li><b>UI_NavigateUp</b> (Action) — Up Arrow or W</li>
+      <li><b>UI_NavigateDown</b> (Action) — Down Arrow or S</li>
+      <li><b>UI_NavigateLeft</b> (Action) — Left Arrow or A</li>
+      <li><b>UI_NavigateRight</b> (Action) — Right Arrow or D</li>
+      <li><b>UI_Select</b> (Action) — Enter or Space</li>
+      <li><b>UI_Back</b> (Action) — Escape or Backspace</li>
+    </ul>
+  
+    <h3>Quick Slots (Optional)</h3>
+    <ul>
+      <li><b>QuickSlot1</b> (Action) — 1</li>
+      <li><b>QuickSlot2</b> (Action) — 2</li>
+      <li><b>QuickSlot3</b> (Action) — 3</li>
+      <li><b>QuickSlot4</b> (Action) — 4</li>
+    </ul>
+  
+    <h3>Debug (Dev Only)</h3>
+    <ul>
+      <li><b>DebugNextDay</b> (Action) — N</li>
+      <li><b>DebugAddMoney</b> (Action) — M</li>
+      <li><b>DebugSpawnAdventurer</b> (Action) — K</li>
+    </ul>
+  
+    <hr>
+  
+    <h3>Example Unreal Input Bindings (C++ Names)</h3>
+    <table>
+      <tr>
+        <th>Action/Axis Name</th>
+        <th>Description / Use</th>
+        <th>Input Type</th>
+        <th>PC Default Key(s)</th>
+        <th>Axis Value</th>
+      </tr>
+      <tr><td>MoveForward</td><td>Player move forward/back</td><td>Axis</td><td>W/S, Up/Down</td><td>W/Up: +1, S/Down: -1</td></tr>
+      <tr><td>MoveRight</td><td>Player move left/right</td><td>Axis</td><td>D/A, Right/Left</td><td>D/Right: +1, A/Left: -1</td></tr>
+      <tr><td>Turn</td><td>Camera yaw</td><td>Axis</td><td>Mouse X</td><td>Mouse Delta X</td></tr>
+      <tr><td>LookUp</td><td>Camera pitch</td><td>Axis</td><td>Mouse Y</td><td>Mouse Delta Y</td></tr>
+      <tr><td>ZoomCamera</td><td>Camera zoom</td><td>Axis</td><td>Mouse Wheel Up/Down</td><td>Up: +1, Down: -1</td></tr>
+      <tr><td>Interact</td><td>Interact with object/NPC</td><td>Action</td><td>E</td><td>-</td></tr>
+      <tr><td>Cancel</td><td>Cancel, close UI, or exit mode</td><td>Action</td><td>Esc, Right Mouse Button</td><td>-</td></tr>
+      <tr><td>OpenInventory</td><td>Open inventory menu</td><td>Action</td><td>I, Tab</td><td>-</td></tr>
+      <tr><td>OpenShopMenu</td><td>Open main shop UI</td><td>Action</td><td>M</td><td>-</td></tr>
+      <tr><td>OpenOrderComputer</td><td>Open ordering computer</td><td>Action</td><td>O</td><td>-</td></tr>
+      <tr><td>PauseGame</td><td>Pause menu</td><td>Action</td><td>Escape</td><td>-</td></tr>
+      <tr><td>TogglePlacementMode</td><td>Enter/exit placement/build mode</td><td>Action</td><td>F, Q, Middle Mouse Button</td><td>-</td></tr>
+      <tr><td>PlaceFurniture</td><td>Place selected furniture</td><td>Action</td><td>Left Mouse Button</td><td>-</td></tr>
+      <tr><td>RotateFurniture</td><td>Rotate furniture</td><td>Action</td><td>R, Mouse Wheel Click</td><td>-</td></tr>
+      <tr><td>CancelPlacement</td><td>Cancel placement/build</td><td>Action</td><td>Right Mouse Button, Escape</td><td>-</td></tr>
+      <tr><td>DeleteFurniture</td><td>Delete selected furniture</td><td>Action</td><td>Delete, X</td><td>-</td></tr>
+      <tr><td>UI_NavigateUp</td><td>Navigate UI up</td><td>Action</td><td>Up Arrow, W</td><td>-</td></tr>
+      <tr><td>UI_NavigateDown</td><td>Navigate UI down</td><td>Action</td><td>Down Arrow, S</td><td>-</td></tr>
+      <tr><td>UI_NavigateLeft</td><td>Navigate UI left</td><td>Action</td><td>Left Arrow, A</td><td>-</td></tr>
+      <tr><td>UI_NavigateRight</td><td>Navigate UI right</td><td>Action</td><td>Right Arrow, D</td><td>-</td></tr>
+      <tr><td>UI_Select</td><td>UI select/confirm</td><td>Action</td><td>Enter, Space</td><td>-</td></tr>
+      <tr><td>UI_Back</td><td>UI back/cancel</td><td>Action</td><td>Escape, Backspace</td><td>-</td></tr>
+      <tr><td>QuickSlot1</td><td>Use quick slot 1</td><td>Action</td><td>1</td><td>-</td></tr>
+      <tr><td>QuickSlot2</td><td>Use quick slot 2</td><td>Action</td><td>2</td><td>-</td></tr>
+      <tr><td>QuickSlot3</td><td>Use quick slot 3</td><td>Action</td><td>3</td><td>-</td></tr>
+      <tr><td>QuickSlot4</td><td>Use quick slot 4</td><td>Action</td><td>4</td><td>-</td></tr>
+      <tr><td>DebugNextDay</td><td>Advance day (Dev only)</td><td>Action</td><td>N</td><td>-</td></tr>
+      <tr><td>DebugAddMoney</td><td>Add funds (Dev only)</td><td>Action</td><td>M</td><td>-</td></tr>
+      <tr><td>DebugSpawnAdventurer</td><td>Spawn adventurer (Dev only)</td><td>Action</td><td>K</td><td>-</td></tr>
+    </table>
+  </div>
+  
   <h2>Game Flow (With Classes Used)</h2>
   <ol>
     <li>
