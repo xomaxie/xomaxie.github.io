@@ -51,15 +51,6 @@
       letter-spacing: 2px;
       opacity: 0.85;
     }
-    .note {
-      background: #e3f2fd;
-      border-left: 4px solid #1976d2;
-      padding: 1em 1.5em;
-      margin: 2em 0 1em 0;
-      border-radius: 12px;
-      color: #234;
-      font-size: 1.06em;
-    }
     .code-block {
       background: #f5f5f5;
       color: #2a2a2a;
@@ -69,7 +60,7 @@
       font-size: 1.09em;
       margin-bottom: 2.5em;
       white-space: pre;
-      line-height: 2.1em;
+      line-height: 2em;
     }
     ol li { margin-bottom: 0.6em; }
     ul li { margin-bottom: 0.3em; }
@@ -85,100 +76,6 @@
   </div>
 
   <h1>FEDoc - Shop Simulator Game Documentation</h1>
-
-  <h2>Overview</h2>
-  <p>
-    This document describes the architecture and flow for the <strong>Shop Simulator</strong> system, a general shop game where the player buys items from adventurers, sells to customers, and manages their own inventory and shop layout in <strong>Unreal Engine 5.6 (C++)</strong>.
-  </p>
-  <hr>
-
-  <h2>Class List</h2>
-  <div class="code-block">
-Core / Game Systems
-
-    AShopSimulatorGameMode
-
-    AShopSimulatorPlayerController
-
-    UGameTimeSubsystem
-
-
-Shop & Inventory
-
-    AShopBuilding
-
-    UShopInventoryComponent
-
-    APlaceableFurnitureActor
-
-    UItemStorageComponent
-
-
-Item System
-
-    UItemDataAsset
-
-    FShopItemStack
-
-
-Adventurer / Customer System
-
-    AAdventurerNPC
-
-    UAdventurerLootComponent
-
-    UAdventurerDialogueComponent
-
-
-Shopping System
-
-    ACashRegisterActor
-
-    UPurchaseIntentComponent
-
-
-Supply Ordering System
-
-    AComputerTerminalActor
-
-    UStockOrderComponent
-
-    UStockDeliveryManagerSubsystem
-
-
-Player Systems
-
-    AShopPlayerCharacter
-
-    UInteractComponent
-
-    UPlacementModeComponent
-
-
-Save & Progression
-
-    UShopSaveGame
-
-    UShopProgressionComponent
-
-
-Optional / Advanced Systems
-
-    UItemConditionComponent
-
-    UAdventurerFactionComponent
-
-    UItemEnchantmentComponent
-
-    UItemIdentifyComponent
-
-    UShopReputationManager
-
-    UItemDisplayComponent
-
-    UEventManagerSubsystem
-  </div>
-
   <h2>Class Hierarchy / Game Structure</h2>
   <div class="code-block">
     AShopSimulatorGameMode
@@ -210,68 +107,206 @@ Optional / Advanced Systems
      ├── UShopSaveGame (save system)
      └── FShopItemStack (used by inventory/storage/etc.)
       </div>
+  <h2>Class List</h2>
+  <table>
+    <tr>
+      <th>Class Name</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td><strong>AShopSimulatorGameMode</strong></td>
+      <td>Core game mode managing day cycles, shop operations, and high-level simulation flow.</td>
+    </tr>
+    <tr>
+      <td><strong>AShopSimulatorPlayerController</strong></td>
+      <td>Handles player input, camera control, UI interaction, and input modes.</td>
+    </tr>
+    <tr>
+      <td><strong>UGameTimeSubsystem</strong></td>
+      <td>Manages game time, day progression, shop open/close hours, and customer schedules.</td>
+    </tr>
+    <tr>
+      <td><strong>AShopBuilding</strong></td>
+      <td>Represents the shop building and spatial layout; manages placed furniture and physical zones.</td>
+    </tr>
+    <tr>
+      <td><strong>UShopInventoryComponent</strong></td>
+      <td>Holds the shop's item stock for selling or placing on shelves and manages item storage.</td>
+    </tr>
+    <tr>
+      <td><strong>APlaceableFurnitureActor</strong></td>
+      <td>Base class for shop furniture (shelves, counters, display cases); supports placement and interaction.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemStorageComponent</strong></td>
+      <td>Component for furniture actors that allows them to store and display items for sale.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemDataAsset</strong></td>
+      <td>Data-driven definition for each item: name, icon, rarity, price, type, etc.</td>
+    </tr>
+    <tr>
+      <td><strong>FShopItemStack</strong></td>
+      <td>Struct representing an item stack: item reference, quantity, optional condition.</td>
+    </tr>
+    <tr>
+      <td><strong>AAdventurerNPC</strong></td>
+      <td>AI-controlled adventurer that visits the shop to sell loot or browse/buy goods.</td>
+    </tr>
+    <tr>
+      <td><strong>UAdventurerLootComponent</strong></td>
+      <td>Stores the randomized loot an adventurer brings back from dungeons (offscreen simulation).</td>
+    </tr>
+    <tr>
+      <td><strong>UAdventurerDialogueComponent</strong></td>
+      <td>Handles trade dialog, negotiation, and sale of loot from adventurer to the player.</td>
+    </tr>
+    <tr>
+      <td><strong>ACashRegisterActor</strong></td>
+      <td>Handles checkout logic; customers queue, pay, and purchases are processed here.</td>
+    </tr>
+    <tr>
+      <td><strong>UPurchaseIntentComponent</strong></td>
+      <td>AI component for customer/adventurer shopping logic, including buying decisions and interest.</td>
+    </tr>
+    <tr>
+      <td><strong>AComputerTerminalActor</strong></td>
+      <td>Interactable computer object for ordering new stock from suppliers.</td>
+    </tr>
+    <tr>
+      <td><strong>UStockOrderComponent</strong></td>
+      <td>Component for supply order UI, tracking placed orders and supplier catalogs.</td>
+    </tr>
+    <tr>
+      <td><strong>UStockDeliveryManagerSubsystem</strong></td>
+      <td>Spawns supply deliveries (crates, couriers) after orders are placed and delivery delay passes.</td>
+    </tr>
+    <tr>
+      <td><strong>AShopPlayerCharacter</strong></td>
+      <td>The player's pawn: handles movement, interaction, and inventory management.</td>
+    </tr>
+    <tr>
+      <td><strong>UInteractComponent</strong></td>
+      <td>Component enabling interactive actions with world objects (furniture, NPCs, terminals).</td>
+    </tr>
+    <tr>
+      <td><strong>UPlacementModeComponent</strong></td>
+      <td>Handles furniture placement logic: grid/free placement, rotation, snapping, and validation.</td>
+    </tr>
+    <tr>
+      <td><strong>UShopSaveGame</strong></td>
+      <td>Manages saving and loading all persistent player/shop state: inventory, funds, layout, progression.</td>
+    </tr>
+    <tr>
+      <td><strong>UShopProgressionComponent</strong></td>
+      <td>Tracks unlockable features, shop upgrades, and new furniture or expansion options.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemConditionComponent</strong></td>
+      <td>Optional: Handles item durability, decay, or spoilage for more complex gameplay.</td>
+    </tr>
+    <tr>
+      <td><strong>UAdventurerFactionComponent</strong></td>
+      <td>Optional: Tracks adventurer allegiances, relationships, and group behavior.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemEnchantmentComponent</strong></td>
+      <td>Optional: Allows for magical or special properties to be added to items.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemIdentifyComponent</strong></td>
+      <td>Optional: Allows items to require identification before stats or value are revealed.</td>
+    </tr>
+    <tr>
+      <td><strong>UShopReputationManager</strong></td>
+      <td>Optional: Manages shop reputation, reviews, and influences customer/adventurer behavior.</td>
+    </tr>
+    <tr>
+      <td><strong>UItemDisplayComponent</strong></td>
+      <td>Optional: Handles special visuals or presentation for displayed items on shelves.</td>
+    </tr>
+    <tr>
+      <td><strong>UEventManagerSubsystem</strong></td>
+      <td>Optional: Triggers random or scheduled events, e.g. theft, festivals, VIPs, or disasters.</td>
+    </tr>
+  </table>
 
-  <h2>Game Flow</h2>
+  <h2>Game Flow (With Classes Used)</h2>
   <ol>
     <li>
       <strong>Game Start / Day Begin</strong>
       <ul>
-        <li>Load save or start new game</li>
+        <li>Load save or start new game (<code>UShopSaveGame</code>)</li>
         <li>Initialize shop (<code>AShopBuilding</code>), player (<code>AShopPlayerCharacter</code>), and all inventory/components</li>
-        <li>Set current day, time, shop funds, and any pending supply deliveries</li>
+        <li>Set current day, time, shop funds, and any pending supply deliveries (<code>UGameTimeSubsystem</code>, <code>UStockDeliveryManagerSubsystem</code>)</li>
       </ul>
     </li>
     <li>
       <strong>Open Shop</strong>
       <ul>
-        <li>Player can place/arrange furniture and shelves</li>
-        <li>Stock items from shop inventory onto shelves</li>
-        <li>Order new stock via the computer</li>
+        <li>Player can place/arrange furniture and shelves (<code>APlaceableFurnitureActor</code>, <code>UPlacementModeComponent</code>)</li>
+        <li>Stock items from shop inventory onto shelves (<code>UItemStorageComponent</code>)</li>
+        <li>Order new stock via the computer (<code>AComputerTerminalActor</code>, <code>UStockOrderComponent</code>)</li>
       </ul>
     </li>
     <li>
       <strong>Adventurer Arrival &amp; Selling</strong>
       <ul>
-        <li>At intervals, spawn <code>AAdventurerNPC</code>s with random loot</li>
-        <li>Adventurers may offer to sell loot to player or browse/shop</li>
+        <li>At intervals (based on <code>UGameTimeSubsystem</code>):</li>
+        <li>Spawn <code>AAdventurerNPC</code>s with random loot (<code>UAdventurerLootComponent</code>)</li>
+        <li>Adventurers may:</li>
+        <ul>
+          <li>Offer to sell loot to player (<code>UAdventurerDialogueComponent</code>)</li>
+          <li>Browse the shop, evaluating items for purchase (<code>UPurchaseIntentComponent</code>)</li>
+        </ul>
       </ul>
     </li>
     <li>
       <strong>Shop Management Loop</strong>
       <ul>
-        <li>Player interacts with adventurers (buy/sell, negotiate)</li>
-        <li>Adventurers buy items from shelves if conditions are met</li>
-        <li>Customers proceed to checkout</li>
-        <li>Player manages/restocks shelves, arranges shop, orders supplies</li>
-        <li>Supply deliveries arrive after a delay</li>
+        <li>Player interacts with adventurers (buy/sell items, negotiate) (<code>AShopPlayerCharacter</code>, <code>UInteractComponent</code>)</li>
+        <li>Adventurers buy items from shelves if conditions are met (price, preference) (<code>UPurchaseIntentComponent</code>, <code>UItemDataAsset</code>)</li>
+        <li>Customers proceed to checkout (<code>ACashRegisterActor</code>)</li>
+        <li>Player manages stock, restocks shelves, arranges shop layout (<code>AShopBuilding</code>, <code>UShopInventoryComponent</code>)</li>
+        <li>Player can use computer to order more supplies (<code>AComputerTerminalActor</code>, <code>UStockOrderComponent</code>)</li>
+        <li>Supply deliveries arrive after a delay (<code>UStockDeliveryManagerSubsystem</code>)</li>
       </ul>
     </li>
     <li>
       <strong>End of Day</strong>
       <ul>
-        <li>At closing time, all customers leave, shop closes</li>
-        <li>Game saves progress</li>
-        <li>Profit/loss, customer satisfaction, reputation calculated</li>
+        <li>At closing time (<code>UGameTimeSubsystem</code>):</li>
+        <li>All remaining customers/adventurers leave</li>
+        <li>Shop closes, no more purchases or sales</li>
+        <li>Game saves progress (<code>UShopSaveGame</code>)</li>
+        <li>Profit/loss, customer satisfaction, reputation calculated (<code>UShopReputationManager</code> - optional)</li>
       </ul>
     </li>
     <li>
       <strong>Progression &amp; Upgrades</strong>
       <ul>
-        <li>Spend earnings to unlock new furniture, expand shop, improve reputation</li>
+        <li>Earnings can be spent to:</li>
+        <ul>
+          <li>Unlock/shop new furniture (<code>UShopProgressionComponent</code>)</li>
+          <li>Expand shop area (<code>AShopBuilding</code>)</li>
+          <li>Improve shop reputation or customer satisfaction (<code>UShopReputationManager</code> - optional)</li>
+        </ul>
       </ul>
     </li>
     <li>
       <strong>Next Day</strong>
       <ul>
-        <li>Advance to next day; repeat from "Open Shop"</li>
+        <li>Advance to the next day (<code>UGameTimeSubsystem</code>)</li>
+        <li>Repeat the loop starting from "Open Shop"</li>
       </ul>
     </li>
   </ol>
+
   <h3>Optional/Advanced Events (Anytime)</h3>
   <ul>
-    <li>Random events (theft, VIP, inspections, festivals)</li>
+    <li>Random events (<code>UEventManagerSubsystem</code>): theft, VIP adventurer, inspections, festivals</li>
     <li>Special orders or rare supply deliveries</li>
-    <li>Upgrades or shop renovations</li>
+    <li>Upgrades or shop renovations (<code>UShopProgressionComponent</code>, <code>AShopBuilding</code>)</li>
   </ul>
 
   <hr>
