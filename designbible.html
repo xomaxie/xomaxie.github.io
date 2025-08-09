@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GateStore — Story & Design Bible</title>
+<meta name="color-scheme" content="light dark" />
+<style>
+:root{
+  --bg:#ffffff; --fg:#1a1a1a; --muted:#5f6b7a; --line:#e5e9ef;
+  --primary:#1565c0; --pri-2:#1976d2; --chip:#e3f2fd; --chip-fg:#0d47a1;
+  --accent:#7c4dff; --soft:#f8fafc; --shadow:rgba(16,24,40,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b0f14; --fg:#e9eef5; --muted:#8ea0b5; --line:#16202c;
+    --primary:#64b5f6; --pri-2:#90caf9; --chip:#0d2238; --chip-fg:#bbdefb;
+    --accent:#b388ff; --soft:#0f141b; --shadow:rgba(0,0,0,.4);
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+}
+
+/* Topbar (mobile) */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:56px; z-index:900;
+  display:flex; align-items:center; gap:12px; padding:0 12px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+}
+.topbar .title{font-weight:700}
+.hamburger{
+  display:none; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:10px; border:1px solid var(--line);
+  background:var(--soft); cursor:pointer; font-size:20px;
+}
+.hamburger:active{transform:scale(.98)}
+
+/* Layout */
+.wrapper{display:grid; grid-template-columns: 280px 1fr; gap:24px; max-width:1320px; margin:0 auto; padding:24px}
+@media (max-width: 980px){
+  .wrapper{grid-template-columns: 1fr; padding:16px; padding-top:72px}
+  .hamburger{display:inline-flex}
+}
+
+/* Sidebar (desktop default) */
+.aside{
+  position:sticky; top:16px; align-self:start; border:1px solid var(--line);
+  background:var(--soft); border-radius:14px; padding:16px; box-shadow:0 6px 18px var(--shadow);
+}
+.aside h2{margin:.25rem 0 .75rem; font-size:14px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
+.nav a{
+  display:block; padding:8px 10px; border-radius:10px; color:var(--fg); text-decoration:none;
+  border:1px solid transparent;
+}
+.nav a:hover{ background:var(--chip); color:var(--chip-fg); border-color:var(--pri-2)}
+.nav .sub{padding-left:10px; margin:6px 0}
+.nav .sub a{font-size:14px; color:var(--muted)}
+
+/* Off-canvas behavior on mobile */
+@media (max-width: 980px){
+  .aside{
+    position:fixed; top:0; left:0; height:100%; width:82%; max-width:320px; padding:72px 16px 16px;
+    border-radius:0; transform:translateX(-102%); transition:transform .25s ease; z-index:1001;
+  }
+  .aside.open{ transform:translateX(0) }
+  .backdrop{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000;
+  }
+  .backdrop.show{ display:block }
+}
+
+/* Header */
+.header{
+  border:1px solid var(--line); border-radius:16px; padding:18px 18px 14px;
+  background:linear-gradient(180deg, rgba(21,101,192,0.06), transparent 60%);
+  margin-bottom:18px; box-shadow:0 6px 18px var(--shadow)
+}
+.kicker{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+h1{margin:.25rem 0 .5rem; font-size:28px}
+.meta{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; background:var(--chip); color:var(--chip-fg);
+  border-radius:999px; padding:6px 10px; font-size:12px; border:1px solid var(--pri-2)
+}
+
+/* Content */
+.section{
+  border:1px solid var(--line); border-radius:16px; padding:18px 18px;
+  background:var(--bg); margin-bottom:14px; box-shadow:0 6px 18px var(--shadow)
+}
+h2{margin:.2rem 0 .6rem; font-size:22px}
+h3{margin:1rem 0 .25rem; font-size:18px}
+h4{margin:.75rem 0 .25rem; font-size:16px; color:var(--muted)}
+p{margin:.4rem 0}
+hr{border:none; border-top:1px solid var(--line); margin:16px 0}
+ul{margin:.35rem 0 .75rem .95rem}
+ol{margin:.35rem 0 .75rem .95rem}
+li{margin:.25rem 0}
+.code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:var(--soft);
+  border:1px solid var(--line); padding:.1em .35em; border-radius:6px}
+
+/* Top link */
+.top{
+  position:fixed; right:16px; bottom:16px; padding:10px 12px; border-radius:10px;
+  background:var(--primary); color:white; text-decoration:none; font-weight:600;
+  box-shadow:0 6px 18px var(--shadow); opacity:.9; z-index:900;
+}
+.top:hover{opacity:1}
+
+/* Small helper styles */
+.note{border-left:4px solid var(--accent); background:var(--soft); padding:10px 12px; border-radius:8px; margin:.5rem 0}
+kbd{border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:.05em .4em; background:var(--soft)}
+</style>
+</head>
+<body>
+<a id="top"></a>
+
+<!-- Mobile topbar -->
+<div class="topbar" role="banner">
+  <button class="hamburger" id="hamburger" aria-label="Open table of contents" aria-controls="toc" aria-expanded="false">☰</button>
+  <div class="title">GateStore — Bible</div>
+</div>
+
+<!-- Backdrop for off-canvas -->
+<div class="backdrop" id="backdrop" hidden></div>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <aside class="aside" id="toc" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <nav class="nav">
+      <a href="#premise">Premise</a>
+      <a href="#world-tone">World & Tone</a>
+      <a href="#leyline-infra">Leyline Infrastructure</a>
+      <a href="#shop">The Shop</a>
+      <a href="#products">Products</a>
+      <div class="sub">
+        <a href="#products-mvp">— MVP Stock</a>
+        <a href="#products-stretch">— Stretch Stock</a>
+      </div>
+      <a href="#stock-sources">Stock Sources</a>
+      <div class="sub">
+        <a href="#sources-mvp">— MVP</a>
+        <a href="#sources-future">— Future</a>
+      </div>
+      <a href="#currency">Currency</a>
+      <a href="#loop">Gameplay Loop</a>
+      <a href="#events">Events</a>
+      <div class="sub">
+        <a href="#events-mvp">— MVP</a>
+        <a href="#events-future">— Future</a>
+      </div>
+      <a href="#npcs">NPC Types</a>
+      <div class="sub">
+        <a href="#npcs-mvp">— MVP</a>
+        <a href="#npcs-future">— Future</a>
+      </div>
+      <a href="#stretch">Stretch Goals & Expansions</a>
+      <a href="#visuals">Visual & UI Direction</a>
+      <a href="#roadmap">MVP Dev Roadmap</a>
+      <hr/>
+      <a href="#dialogue">Dialogue Sheet</a>
+      <div class="sub">
+        <a href="#dlg-adv">— Adventurers</a>
+        <a href="#dlg-town">— Townsfolk</a>
+        <a href="#dlg-courier">— GateDrop Couriers</a>
+        <a href="#dlg-hipster">— Potion Hipster (Future)</a>
+        <a href="#dlg-lost">— Chronically Lost Adventurer (Future)</a>
+        <a href="#dlg-theorist">— Leyline Theorist (Future)</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <header class="header">
+      <div class="kicker">GateStore</div>
+      <h1>Story & Design Bible</h1>
+      <div class="meta">
+        <span class="chip">Ley-Net</span>
+        <span class="chip">Ley-Energy</span>
+        <span class="chip">GateDrop™</span>
+        <span class="chip">MVP + Stretch</span>
+      </div>
+    </header>
+
+    <!-- Bible -->
+    <section id="premise" class="section">
+      <h2>1. Premise</h2>
+      <p><strong>GateStore</strong> is the general & adventurer supply shop perched on a <em>leyline nexus</em>—magical currents that power the city, carry information, and occasionally spit out a goat.</p>
+      <p>Leylines are the backbone of modern life: the <strong>Ley-Net</strong> (instant magical communications & commerce) and <strong>Ley-Energy</strong> (clean, renewable, pleasantly sparkly power). Your job is to keep shelves stocked, customers happy, and the GateDrop portal from flattening anyone during deliveries.</p>
+    </section>
+
+    <section id="world-tone" class="section">
+      <h2>2. World &amp; Tone</h2>
+      <ul>
+        <li><strong>Fantasy meets everyday life</strong>: enchanted swords beside enchanted frying pans.</li>
+        <li><strong>Goofy but consistent</strong>: yes, the GateDrop once delivered an entire cow; no one blinked.</li>
+        <li><strong>Alive & bustling</strong>: gossiping adventurers, ley-tea complaints, courier arguments with the portal.</li>
+      </ul>
+    </section>
+
+    <section id="leyline-infra" class="section">
+      <h2>3. Leyline Infrastructure</h2>
+      <ul>
+        <li><strong>Ley-Energy</strong>: powers lamps to coffee warmers; sometimes makes the mop float.</li>
+        <li><strong>Ley-Net</strong>: global arcane network for messaging, ordering stock, and highly educational cat videos.</li>
+        <li><strong>GateDrop™ Portal</strong>: brass-and-crystal ring outside the shop. Small orders arrive in crates; big orders <em>thunk</em> to the pavement; sometimes the wrong thing comes through.</li>
+      </ul>
+    </section>
+
+    <section id="shop" class="section">
+      <h2>4. The Shop</h2>
+      <p><strong>Owner:</strong> You.</p>
+      <ul>
+        <li><strong>Shop Floor</strong>: displays & sales.</li>
+        <li><strong>Storage</strong>: where boxes pile up until you deal with them.</li>
+        <li><strong>Ley-Terminal Desk</strong>: your magical computer (with questionable pop-up ads).</li>
+      </ul>
+    </section>
+
+    <section id="products" class="section">
+      <h2>5. Products</h2>
+      <h3 id="products-mvp">MVP Stock</h3>
+      <ul>
+        <li><strong>Adventurer Gear</strong>: starter swords, shields, bows; health & mana potions; cheap talismans (“Guaranteed to work… once”).</li>
+        <li><strong>Civilian Goods</strong>: bread, fruit, ley-tea; cooking pots; enchanted brooms that sometimes chase cats.</li>
+      </ul>
+      <h3 id="products-stretch">Stretch Goal Stock</h3>
+      <ul>
+        <li>Rare weapons & armor (e.g., “Thudbringer”, “Soggy Blade”).</li>
+        <li>Crafted items made from dungeon loot.</li>
+        <li>Ley-trinkets for mood, luck, and questionable romance.</li>
+      </ul>
+    </section>
+
+    <section id="stock-sources" class="section">
+      <h2>6. Stock Sources</h2>
+      <h3 id="sources-mvp">MVP</h3>
+      <ul>
+        <li><strong>Ley-Net Orders</strong> via Ley-Terminal → delivered through GateDrop.</li>
+        <li><strong>Adventurer Buybacks</strong>: they sell dungeon loot, you haggle, you resell.</li>
+      </ul>
+      <h3 id="sources-future">Future Additions</h3>
+      <ul>
+        <li><strong>Leyline Drift Finds</strong>—random rare goods from unstable currents.</li>
+        <li><strong>Guild Contracts</strong>—bulk orders for expeditions.</li>
+        <li><strong>Artifact Auctions</strong>—bid against rivals.</li>
+      </ul>
+    </section>
+
+    <section id="currency" class="section">
+      <h2>7. Currency</h2>
+      <p><strong>Leymarks (ℒ)</strong>: crystal‑infused coinage that faintly glows and smells of cinnamon.</p>
+      <ul>
+        <li><strong>MVP:</strong> only Leymarks.</li>
+        <li><strong>Future:</strong> dungeon tokens, rare reagents, influential “favors”.</li>
+      </ul>
+    </section>
+
+    <section id="loop" class="section">
+      <h2>8. Gameplay Loop (MVP)</h2>
+      <ol>
+        <li>Check stock.</li>
+        <li>Order via Ley-Net.</li>
+        <li>Wait for GateDrop to <em>whomp</em> the delivery outside.</li>
+        <li>Place items on shelves.</li>
+        <li>Sell to customers.</li>
+        <li>Count Leymarks, sweep stray portal deliveries, sleep.</li>
+      </ol>
+    </section>
+
+    <section id="events" class="section">
+      <h2>9. Events</h2>
+      <h3 id="events-mvp">MVP</h3>
+      <ul>
+        <li>Busy/Slow Day demand modifiers.</li>
+        <li>Occasional GateDrop mix-up (minor gag items).</li>
+      </ul>
+      <h3 id="events-future">Future Events</h3>
+      <ul>
+        <li><strong>Leyline Surges</strong>: more customers, rare loot, odd effects.</li>
+        <li><strong>Rift Days</strong>: corrupted goods appear.</li>
+        <li><strong>GateDrop Malfunction</strong>: too much stuff at once—or from the wrong dimension.</li>
+      </ul>
+    </section>
+
+    <section id="npcs" class="section">
+      <h2>10. NPC Types</h2>
+      <h3 id="npcs-mvp">MVP</h3>
+      <ul>
+        <li><strong>Adventurers</strong>: buy gear, sell loot.</li>
+        <li><strong>Townsfolk</strong>: groceries & home goods.</li>
+        <li><strong>GateDrop Couriers</strong>: “calibration” checks, muddy footprints.</li>
+      </ul>
+      <h3 id="npcs-future">Future</h3>
+      <ul>
+        <li><strong>Potion Hipster</strong>: “pre-surge vintage only.”</li>
+        <li><strong>Chronically Lost Adventurer</strong>: always looking for “the other dungeon.”</li>
+        <li><strong>Leyline Theorist</strong>: insists leylines are giant magical snakes.</li>
+      </ul>
+    </section>
+
+    <section id="stretch" class="section">
+      <h2>11. Stretch Goals &amp; Expansions</h2>
+      <ol>
+        <li>Item Infusion (risky upgrades).</li>
+        <li>Leyline Forecasting UI.</li>
+        <li>Rival Shops system.</li>
+        <li>Multi-day Story Arcs from anomalies.</li>
+      </ol>
+    </section>
+
+    <section id="visuals" class="section">
+      <h2>12. Visual &amp; UI Direction</h2>
+      <ul>
+        <li><strong>Palette</strong>: warm woods, glowing blues & purples.</li>
+        <li><strong>UI</strong>: parchment + crystal-glow accents.</li>
+        <li><strong>GateDrop Animation</strong>: flash → drop → dust puff.</li>
+      </ul>
+    </section>
+
+    <section id="roadmap" class="section">
+      <h2>13. MVP Dev Roadmap (2 Months)</h2>
+      <h3>Month 1</h3>
+      <ul>
+        <li>Shop floor & NPC buying loop.</li>
+        <li>Ley-Net ordering + GateDrop delivery.</li>
+        <li>Stock placement & sales tracking.</li>
+      </ul>
+      <h3>Month 2</h3>
+      <ul>
+        <li>Economy balance.</li>
+        <li>Busy/Slow day modifiers.</li>
+        <li>Polish & bug fixes.</li>
+        <li>Basic GateDrop gag events.</li>
+      </ul>
+    </section>
+
+    <!-- Dialogue Sheet -->
+    <section id="dialogue" class="section">
+      <h2>Dialogue Sheet</h2>
+      <div class="note">Put these in a DataTable with columns like <span class="code">SpeakerType</span>, <span class="code">Context</span>, <span class="code">Line</span>, optionally <span class="code">Weight</span> or <span class="code">Tags</span> (e.g., <span class="code">Buy</span>, <span class="code">Sell</span>, <span class="code">Portal</span>).</div>
+
+      <h3 id="dlg-adv">Adventurers</h3>
+      <h4>Buying Gear</h4>
+      <ul>
+        <li>"Do you have anything in ‘less stabby yourself’ size?"</li>
+        <li>"Last sword I bought snapped in half… in the sheath."</li>
+        <li>"I’ll take the cheapest health potion you’ve got. Statistically, I won’t need it."</li>
+        <li>"Any discounts for ‘most likely to get eaten by a mimic’?"</li>
+        <li>"Does this armor come in ‘bloodstain camouflage’?"</li>
+      </ul>
+      <h4>Selling Loot</h4>
+      <ul>
+        <li>"Found this in a slime. Still works. Mostly."</li>
+        <li>"If it smells weird, that’s just dungeon air."</li>
+        <li>"Pretty sure this gem is cursed… so… five Leymarks?"</li>
+        <li>"Don’t ask where I got it. Or why it’s sticky."</li>
+        <li>"It only screams when you touch it. Interested?"</li>
+      </ul>
+
+      <h3 id="dlg-town">Townsfolk</h3>
+      <h4>Buying Goods</h4>
+      <ul>
+        <li>"Is your bread fresh? Yesterday’s batch turned into pigeons."</li>
+        <li>"I’ll take some ley-tea. Strong enough to wake the dead, if you have it."</li>
+        <li>"Does this broom come enchanted or is it just naturally… twitchy?"</li>
+        <li>"You wouldn’t happen to have a ladle that doesn’t bite, would you?"</li>
+        <li>"My cousin swears your candles hum at night. I want three."</li>
+      </ul>
+      <h4>Chit-Chat</h4>
+      <ul>
+        <li>"GateDrop dropped a sheep again this morning, huh?"</li>
+        <li>"I saw an adventurer use a fish as a sword. They won, somehow."</li>
+        <li>"Ley-Net was down last night. Had to talk to my husband. Awful."</li>
+        <li>"The weather forecast says 40% chance of frogs. Bring an umbrella."</li>
+      </ul>
+
+      <h3 id="dlg-courier">GateDrop Couriers</h3>
+      <h4>Deliveries</h4>
+      <ul>
+        <li>"Sign here, here, and here… with your off-hand, please."</li>
+        <li>"Careful with this crate. It’s humming for some reason."</li>
+        <li>"Oh, that? Not on the manifest. Probably fine."</li>
+        <li>"The GateDrop portal’s been moody. This one might smell like cheese."</li>
+        <li>"Our warranty doesn’t cover temporal anomalies."</li>
+      </ul>
+      <h4>Small Talk</h4>
+      <ul>
+        <li>"Had to deliver to a shop on a mountain today. My calves are immortal now."</li>
+        <li>"Portal hiccuped last week and sent me into a birthday party. Not mine."</li>
+        <li>"Don’t stand under the GateDrop. Trust me."</li>
+        <li>"Somebody keeps ordering live crabs to the wrong address."</li>
+      </ul>
+
+      <h3 id="dlg-hipster">Potion Hipster (Future)</h3>
+      <ul>
+        <li>"Is this pre-surge or post-surge vintage? You can tell in the mouthfeel."</li>
+        <li>"I only drink potions brewed under a waning moon."</li>
+        <li>"This batch tastes… pedestrian."</li>
+        <li>"Was this stirred clockwise or counterclockwise? It matters."</li>
+      </ul>
+
+      <h3 id="dlg-lost">Chronically Lost Adventurer (Future)</h3>
+      <ul>
+        <li>"Hey, where’s the dungeon again? I’ve asked five people already."</li>
+        <li>"Is this the armory? No? Bakery? Tavern?"</li>
+        <li>"If I go left, will I die? Right? Both?"</li>
+        <li>"I think my map is upside down. Or I am."</li>
+      </ul>
+
+      <h3 id="dlg-theorist">Leyline Theorist (Future)</h3>
+      <ul>
+        <li>"The leylines are just giant magical snakes, you know. They’re watching us."</li>
+        <li>"Ever wonder why bread costs more on Tuesdays? Leyline interference."</li>
+        <li>"The city’s built on a leyline loop. That’s why pigeons walk in circles."</li>
+        <li>"They say the Ley-Net is safe, but my beard grows faster on upload days."</li>
+      </ul>
+    </section>
+
+    <footer class="section" style="text-align:center">
+      <small>GateStore — Story &amp; Design Bible • Built for internal use</small>
+    </footer>
+  </main>
+</div>
+
+<a class="top" href="#top">↑ Top</a>
+
+<script>
+// Smooth-scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const id=a.getAttribute('href');
+    if(id.length>1){
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+      // Close drawer on mobile after navigation
+      closeDrawer();
+    }
+  });
+});
+
+const aside = document.getElementById('toc');
+const hamburger = document.getElementById('hamburger');
+const backdrop = document.getElementById('backdrop');
+
+function openDrawer(){
+  aside.classList.add('open');
+  backdrop.classList.add('show');
+  backdrop.hidden = false;
+  hamburger.setAttribute('aria-expanded','true');
+}
+function closeDrawer(){
+  aside.classList.remove('open');
+  backdrop.classList.remove('show');
+  backdrop.hidden = true;
+  hamburger.setAttribute('aria-expanded','false');
+}
+
+hamburger?.addEventListener('click', ()=>{
+  if(aside.classList.contains('open')) closeDrawer(); else openDrawer();
+});
+backdrop?.addEventListener('click', closeDrawer);
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeDrawer();
+});
+</script>
+</body>
+</html>
