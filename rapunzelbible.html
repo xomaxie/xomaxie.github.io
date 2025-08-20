@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rapunzel Run — Story & Design Bible</title>
+<meta name="color-scheme" content="light dark" />
+<style>
+:root{
+  --bg:#fff9fb; --fg:#2a2438; --muted:#7a6f86; --line:#f3e7ef;
+  --primary:#e96aa3; --pri-2:#f48fb1; --chip:#ffe3ef; --chip-fg:#8e2f5c;
+  --accent:#9b8cff; --soft:#fff0f6; --shadow:rgba(210,140,190,.25);
+  --card-grad:linear-gradient(180deg, rgba(233,106,163,0.10), transparent 60%);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#140f16; --fg:#f7ecf3; --muted:#b9a8c1; --line:#251b28;
+    --primary:#ff7ab6; --pri-2:#ffaad0; --chip:#2a1e2b; --chip-fg:#ffd3e6;
+    --accent:#b9a8ff; --soft:#1a121c; --shadow:rgba(0,0,0,.5);
+    --card-grad:linear-gradient(180deg, rgba(255,122,182,0.10), transparent 60%);
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+  background-image:
+    radial-gradient(20px 20px at 20px 20px, rgba(233,106,163,.07), transparent 40%),
+    radial-gradient(28px 28px at calc(100% - 40px) 60px, rgba(155,140,255,.06), transparent 50%);
+}
+
+/* Topbar (mobile) */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:56px; z-index:900;
+  display:flex; align-items:center; gap:12px; padding:0 12px;
+  background:var(--bg); border-bottom:1px solid var(--line);
+}
+.topbar .title{font-weight:800; letter-spacing:.02em}
+.hamburger{
+  display:none; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:12px; border:1px solid var(--line);
+  background:var(--soft); cursor:pointer; font-size:20px;
+}
+.hamburger:active{transform:scale(.98)}
+
+/* Layout */
+.wrapper{display:grid; grid-template-columns: 300px 1fr; gap:24px; max-width:1220px; margin:0 auto; padding:24px}
+@media (max-width: 980px){
+  .wrapper{grid-template-columns: 1fr; padding:16px; padding-top:72px}
+  .hamburger{display:inline-flex}
+}
+
+/* Sidebar */
+.aside{
+  position:sticky; top:16px; align-self:start; border:1px solid var(--line);
+  background:var(--soft); border-radius:18px; padding:16px; box-shadow:0 12px 30px var(--shadow);
+}
+.aside h2{margin:.25rem 0 .75rem; font-size:13px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted)}
+.nav a{
+  display:block; padding:10px 12px; border-radius:12px; color:var(--fg); text-decoration:none;
+  border:1px solid transparent; font-weight:600;
+}
+.nav a:hover{ background:var(--chip); color:var(--chip-fg); border-color:var(--pri-2)}
+.nav .sub{padding-left:12px; margin:6px 0}
+.nav .sub a{font-size:14px; color:var(--muted); font-weight:500}
+
+/* Off-canvas (mobile) */
+@media (max-width: 980px){
+  .aside{
+    position:fixed; top:0; left:0; height:100%; width:82%; max-width:320px; padding:72px 16px 16px;
+    border-radius:0; transform:translateX(-102%); transition:transform .25s ease; z-index:1001;
+  }
+  .aside.open{ transform:translateX(0) }
+  .backdrop{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000;
+  }
+  .backdrop.show{ display:block }
+}
+
+/* Header */
+.header{
+  border:1px solid var(--line); border-radius:20px; padding:22px 20px 16px;
+  background:var(--bg); background-image:var(--card-grad);
+  margin-bottom:18px; box-shadow:0 12px 30px var(--shadow)
+}
+.kicker{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+h1{margin:.25rem 0 .5rem; font-size:30px}
+.meta{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; background:var(--chip); color:var(--chip-fg);
+  border-radius:999px; padding:6px 10px; font-size:12px; border:1px solid var(--pri-2); box-shadow:0 4px 10px var(--shadow)
+}
+
+/* Content */
+.section{
+  border:1px solid var(--line); border-radius:20px; padding:20px 20px;
+  background:var(--bg); margin-bottom:14px; box-shadow:0 12px 30px var(--shadow)
+}
+h2{margin:.2rem 0 .6rem; font-size:22px}
+h3{margin:1rem 0 .35rem; font-size:18px}
+h4{margin:.75rem 0 .25rem; font-size:16px; color:var(--muted)}
+p{margin:.4rem 0}
+hr{border:none; border-top:1px solid var(--line); margin:16px 0}
+ul{margin:.35rem 0 .75rem 1.05rem}
+ol{margin:.35rem 0 .75rem 1.05rem}
+li{margin:.28rem 0}
+.code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:var(--soft);
+  border:1px solid var(--line); padding:.1em .35em; border-radius:6px}
+
+/* Top link */
+.top{
+  position:fixed; right:16px; bottom:16px; padding:10px 12px; border-radius:12px;
+  background:var(--primary); color:white; text-decoration:none; font-weight:700;
+  box-shadow:0 10px 24px var(--shadow); opacity:.95; z-index:900;
+}
+.top:hover{opacity:1}
+
+/* Notes */
+.note{border-left:4px solid var(--accent); background:var(--soft); padding:10px 12px; border-radius:10px; margin:.5rem 0}
+kbd{border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:.05em .4em; background:var(--soft)}
+
+/* Cute details */
+.heart{display:inline-block; width:10px; height:10px; background:var(--primary); transform:rotate(45deg); margin-right:6px; border-radius:2px}
+.heart:before,.heart:after{content:""; position:absolute; width:10px; height:10px; background:var(--primary); border-radius:50%}
+.heart:before{left:-6px; top:0}
+.heart:after{top:-6px; left:0}
+
+</style>
+</head>
+<body>
+<a id="top"></a>
+
+<!-- Mobile topbar -->
+<div class="topbar" role="banner">
+  <button class="hamburger" id="hamburger" aria-label="Open table of contents" aria-controls="toc" aria-expanded="false">☰</button>
+  <div class="title">Rapunzel Run — Bible</div>
+</div>
+
+<!-- Backdrop for off-canvas -->
+<div class="backdrop" id="backdrop" hidden></div>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <aside class="aside" id="toc" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <nav class="nav">
+      <a href="#premise">Premise</a>
+      <a href="#tone-pillars">Tone & Core Pillars</a>
+      <a href="#loop">Roguelite Loop</a>
+      <a href="#flow">Macro Flow</a>
+      <a href="#stats-items">Stats & Items</a>
+      <a href="#witch-ai">Witch AI</a>
+      <a href="#events">Event Pools</a>
+      <a href="#npcs">NPCs</a>
+      <div class="sub">
+        <a href="#npc-prince">— Blind Prince</a>
+        <a href="#npc-witch">— The Witch</a>
+        <a href="#npc-others">— Others</a>
+      </div>
+      <a href="#endings">Endings & Meta</a>
+      <a href="#visuals">Visual & Audio</a>
+      <a href="#roadmap">MVP Roadmap</a>
+      <hr/>
+      <a href="#dialogue">Dialogue Sheet</a>
+      <div class="sub">
+        <a href="#dlg-prince">— Prince</a>
+        <a href="#dlg-witch">— Witch</a>
+        <a href="#dlg-wanderers">— Wanderers</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <header class="header">
+      <div class="kicker">Rapunzel Run</div>
+      <h1>Story & Design Bible</h1>
+      <div class="meta">
+        <span class="chip">Roguelite</span>
+        <span class="chip">Adventure Horror (Cute)</span>
+        <span class="chip">Branching Narrative</span>
+        <span class="chip">Dozens of Endings</span>
+      </div>
+    </header>
+
+    <!-- Premise -->
+    <section id="premise" class="section">
+      <h2>1. Premise</h2>
+      <p><strong>Rapunzel Run</strong> turns the classic tale into a looping escape story. Each run, you try to flee the tower and the witch’s reach—through forests, ruins, and wastelands—collecting memories, kindness, and cute-but-creepy trinkets.</p>
+      <p>Even failure creates <em>new stories</em>: if you fall into thorns, you might meet the Blind Prince; if you bargain, you might grow claws. Every ending unlocks something tender or terrible for the next run.</p>
+    </section>
+
+    <!-- Tone & Pillars -->
+    <section id="tone-pillars" class="section">
+      <h2>2. Tone & Core Pillars</h2>
+      <ul>
+        <li><strong>Cozy-Macabre:</strong> soft palettes, round shapes, little hearts on very sharp things.</li>
+        <li><strong>The Chase:</strong> the witch is always close—sometimes hunting, sometimes whispering.</li>
+        <li><strong>No Dead Ends:</strong> every failure routes to a subplot or variant life.</li>
+        <li><strong>Persistent Kindness:</strong> kindness and curiosity are power sources across runs.</li>
+      </ul>
+    </section>
+
+    <!-- Loop -->
+    <section id="loop" class="section">
+      <h2>3. Roguelite Loop</h2>
+      <ol>
+        <li>Wake in the <strong>Tower Hub</strong> with a small random starting kit.</li>
+        <li>Choose a path (climb hair, secret passage, bargain) → enter a biome.</li>
+        <li>Face events, make choices, gather items and memories.</li>
+        <li>Confront the witch’s presence at biome’s end (escape, pay, or suffer).</li>
+        <li>Reach an <strong>ending state</strong> → return to Tower with new unlocks.</li>
+      </ol>
+    </section>
+
+    <!-- Macro Flow -->
+    <section id="flow" class="section">
+      <h2>4. Macro Flow</h2>
+      <pre class="note" style="white-space:pre-wrap">[Hub: The Tower Cell]
+  ├─ Stay → Starvation/Hallucination Run → (Ghost Rapunzel • Witch’s Apprentice)
+  └─ Escape
+      ├─ Hair Descent → Fall Risk → Blind Wanderer Ending / Forest → Meet Prince
+      │     ├─ Trust Him → Joint Escape
+      │     └─ Reject Him → Monster Prince Run
+      ├─ Secret Passage → Wasteland Survival → Witch Pursuit
+      └─ Magical Bargain (cut hair, trade freedom)
+            ├─ Cursed Form Run
+            └─ Cycle Break (destroy tower)
+      </pre>
+      <p class="note">Every failure becomes a story branch. Unlocks persist: items, truths, new routes.</p>
+    </section>
+
+    <!-- Stats & Items -->
+    <section id="stats-items" class="section">
+      <h2>5. Stats & Items</h2>
+      <h3>Stats</h3>
+      <ul>
+        <li><strong>Resolve:</strong> dialogue strength; protects against whispers.</li>
+        <li><strong>Vitality:</strong> endurance. Hitting 0 triggers a narrative ending, not a void fail.</li>
+        <li><strong>Memory:</strong> meta-knowledge; reveals secrets and unlock routes across runs.</li>
+      </ul>
+      <h3>Items (Sample)</h3>
+      <ul>
+        <li><strong>Silver Scissors:</strong> cut hair (lower witch tether, new paths).</li>
+        <li><strong>Rampion Herbs:</strong> heal; sometimes bittersweet side effects.</li>
+        <li><strong>Mirror Shard:</strong> repel witch once; cracks with use.</li>
+        <li><strong>Ribbon Rope:</strong> cute, sturdy, unreliable when wet.</li>
+      </ul>
+    </section>
+
+    <!-- Witch AI -->
+    <section id="witch-ai" class="section">
+      <h2>6. Witch AI</h2>
+      <ul>
+        <li><strong>Presence Meter:</strong> rises if you linger; decays when you hide or pray.</li>
+        <li><strong>Manifestations:</strong> whispers (Resolve checks), growth spurts of tower, direct chase.</li>
+        <li><strong>Trickster Offers:</strong> shortcuts at a price (e.g., hair for safety).</li>
+      </ul>
+    </section>
+
+    <!-- Events -->
+    <section id="events" class="section">
+      <h2>7. Event Pools</h2>
+      <h3>MVP</h3>
+      <ul>
+        <li>Mirror Pond (truth at a cost)</li>
+        <li>Lost Cradle (carry or leave?)</li>
+        <li>Bower of Ribbons (gear boon, presence spike)</li>
+        <li>Thorn Tangle (path risk → Prince variant)</li>
+      </ul>
+      <h3>Future</h3>
+      <ul>
+        <li>Ruin Choir (sing to pass)</li>
+        <li>Market of Moths (trade memories)</li>
+        <li>Procession of Brides (blend or sabotage)</li>
+      </ul>
+    </section>
+
+    <!-- NPCs -->
+    <section id="npcs" class="section">
+      <h2>8. NPCs</h2>
+      <h3 id="npc-prince">Blind Prince</h3>
+      <p>Escort with risk/reward. Slows you by ~25% but grants warnings and Resolve boosts. Can end as loyal partner, hostile miniboss, or witch’s knight.</p>
+      
+      <h4>Entry Conditions</h4>
+      <ul>
+        <li>Triggered if the Prince attempts to climb but falls into thorns (classic tale reference).</li>
+        <li>Alternatively, in some runs he may already be blind when encountered in the forest or wasteland.</li>
+        <li>Player can choose to guide him (slower movement, higher vulnerability) or abandon him (cold survival advantage, but alters later endings).</li>
+      </ul>
+      
+      <h4>Escort Mechanic</h4>
+      <ul>
+        <li>Carrying or guiding the Prince slows your speed by ~20–30%.</li>
+        <li>Witch aggro builds faster during chase segments (she senses weakness).</li>
+        <li>But he gives Resolve boosts when talking — morale doesn’t drop as quickly.</li>
+      </ul>
+      
+      <h4>Dual Choice Events</h4>
+      <ul>
+        <li>Player makes decisions for both (“Do we rest here?” “Should we trust this stranger?”).</li>
+        <li>If Prince disagrees and you override him, his trust weakens → possible betrayal.</li>
+      </ul>
+      
+      <h4>Blind Insight</h4>
+      <ul>
+        <li>Prince can “hear” things others can’t: whispers of the witch, hidden dangers, secret passage hints.</li>
+        <li>Mechanically: highlights certain traps/events on map or gives narrative warnings.</li>
+      </ul>
+      
+      <h4>Branching Outcomes</h4>
+      <h4>Loyal Escape (Bittersweet Classic)</h4>
+      <ul>
+        <li>Guide him through multiple zones.</li>
+        <li>In confrontation, Rapunzel’s tears heal him.</li>
+        <li><strong>Ending:</strong> Escape to kingdom together.</li>
+        <li><strong>Unlock:</strong> “Sight Restored” → lets future runs start with better vision of map layout.</li>
+      </ul>
+      
+      <h4>Cold Freedom</h4>
+      <ul>
+        <li>Sacrifice the Prince to delay the witch (drop him as bait).</li>
+        <li>Escape alone.</li>
+        <li><strong>Ending:</strong> Freedom, but haunted by whispers.</li>
+        <li><strong>Unlock:</strong> Prince’s Ring (used for alternate bargains with NPCs).</li>
+      </ul>
+      
+      <h4>Wanderers Forever</h4>
+      <ul>
+        <li>Get lost together in wasteland.</li>
+        <li>Prince keeps morale alive, but no escape.</li>
+        <li><strong>Ending:</strong> Eternal wandering — liminal, tragic loop.</li>
+        <li><strong>Unlock:</strong> “Shared Resolve” → future runs start with doubled Resolve meter.</li>
+      </ul>
+      
+      <h4>Betrayed by Love</h4>
+      <ul>
+        <li>If trust meter drops low (ignored him, overrode choices, mocked blindness), he lashes out.</li>
+        <li>Becomes hostile — a new miniboss fight: “Blind Prince” as corrupted form.</li>
+        <li><strong>Ending:</strong> Death by his hand or forced reconciliation (rare branch).</li>
+        <li><strong>Unlock:</strong> Enemy encounter pool “The Fallen Prince” for later runs.</li>
+      </ul>
+      
+      <h4>Witch’s Pawn</h4>
+      <ul>
+        <li>Witch captures both. She restores his sight in exchange for his loyalty.</li>
+        <li>He becomes her servant, hunting you in future runs.</li>
+        <li><strong>Ending:</strong> Enslavement.</li>
+        <li><strong>Unlock:</strong> Persistent new antagonist NPC (“Prince as Witch’s Knight”).</li>
+      </ul>
+      
+      <h4>Thematic Payoff</h4>
+      <ul>
+        <li>The Blind Prince subplot embodies the core horror tension: cling to love at great risk, or cut ties for survival.</li>
+        <li>Every branch creates a permanent meta-change in the roguelite pool — the Prince isn’t just an ending, he reshapes the game’s ecology.</li>
+        <li>Replayability: players chase his “best” ending but discover the darker ones naturally through failure.</li>
+      </ul>
+      
+      <h3 id="npc-witch">The Witch</h3>
+      <p>Primary antagonist and systemic pressure. Personality shifts per run: possessive, negotiator, judge.</p>
+
+      <h3 id="npc-others">Others</h3>
+      <ul>
+        <li><strong>Woodcutter Twins:</strong> helpful but skittish.</li>
+        <li><strong>Hedge Nuns:</strong> guardians of the thorn maze.</li>
+        <li><strong>Wasteland Wanderers:</strong> trade stories for items.</li>
+      </ul>
+    </section>
+
+    <!-- Endings & Meta -->
+    <section id="endings" class="section">
+      <h2>9. Endings & Meta</h2>
+      <ul>
+        <li><strong>Classic Escape:</strong> tears restore sight; start future runs with better map sense.</li>
+        <li><strong>Cold Freedom:</strong> sacrifice prince; unlock Prince’s Ring (bargain routes).</li>
+        <li><strong>Wanderers Forever:</strong> shared exile; double Resolve next run.
+        </li>
+        <li><strong>Witch’s Apprentice:</strong> start as tower keeper with new verbs.</li>
+        <li><strong>Cycle Break:</strong> destroy the tower; rare conditions.</li>
+      </ul>
+    </section>
+
+    <!-- Visual & Audio -->
+    <section id="visuals" class="section">
+      <h2>10. Visual & Audio Direction</h2>
+      <ul>
+        <li><strong>Palette:</strong> pastels (rose, lilac, cream) with deep shadow accents.</li>
+        <li><strong>UI:</strong> rounded cards, heart motifs, soft drop shadows.</li>
+        <li><strong>Audio:</strong> music box + choral hum; chase adds distorted lullaby.</li>
+      </ul>
+    </section>
+
+    <!-- Roadmap -->
+    <section id="roadmap" class="section">
+      <h2>11. MVP Roadmap (6–8 Weeks)</h2>
+      <h3>Phase 1</h3>
+      <ul>
+        <li>Hub + one biome (Forest) procedural pass.</li>
+        <li>Presence Meter + simple chase.</li>
+        <li>Items: Scissors, Rampion, Mirror.</li>
+      </ul>
+      <h3>Phase 2</h3>
+      <ul>
+        <li>Blind Prince route (escort rules + 2 endings).</li>
+        <li>Event pool (6–8 cards).</li>
+        <li>Meta unlocks + save.</li>
+      </ul>
+      <h3>Phase 3</h3>
+      <ul>
+        <li>Second biome (Wasteland) + bargain route.</li>
+        <li>Polish, balance, QA.</li>
+      </ul>
+    </section>
+
+    <!-- Dialogue Sheet -->
+    <section id="dialogue" class="section">
+      <h2>Dialogue Sheet</h2>
+      <div class="note">Store as a DataTable with <span class="code">Speaker</span>, <span class="code">Context</span>, <span class="code">Line</span>, optional <span class="code">Weight</span> / <span class="code">Tags</span>.</div>
+
+      <h3 id="dlg-prince">Prince</h3>
+      <ul>
+        <li>"Your steps sound brave today. May I borrow a little of that?"</li>
+        <li>"I can hear her smile. It sounds like scissors."</li>
+        <li>"If you say left, I trust left."</li>
+      </ul>
+
+      <h3 id="dlg-witch">Witch</h3>
+      <ul>
+        <li>"Dear heart, the world is hungry. Let me feed you safety."</li>
+        <li>"Hair grows back. Love does not."</li>
+        <li>"I can wait. Towers are patient."</li>
+      </ul>
+
+      <h3 id="dlg-wanderers">Wanderers</h3>
+      <ul>
+        <li>"Trade a story for a ribbon?"</li>
+        <li>"Mind the thorns. They remember names."</li>
+        <li>"If you see the choir, hum along or run."</li>
+      </ul>
+    </section>
+
+    <footer class="section" style="text-align:center">
+      <small>Rapunzel Run — Story & Design Bible • Internal</small>
+    </footer>
+  </main>
+</div>
+
+<a class="top" href="#top">↑ Top</a>
+
+<script>
+// Smooth-scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const id=a.getAttribute('href');
+    if(id.length>1){
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+      closeDrawer();
+    }
+  });
+});
+
+const aside = document.getElementById('toc');
+const hamburger = document.getElementById('hamburger');
+const backdrop = document.getElementById('backdrop');
+
+function openDrawer(){
+  aside.classList.add('open');
+  backdrop.classList.add('show');
+  backdrop.hidden = false;
+  hamburger.setAttribute('aria-expanded','true');
+}
+function closeDrawer(){
+  aside.classList.remove('open');
+  backdrop.classList.remove('show');
+  backdrop.hidden = true;
+  hamburger.setAttribute('aria-expanded','false');
+}
+
+hamburger?.addEventListener('click', ()=>{
+  if(aside.classList.contains('open')) closeDrawer(); else openDrawer();
+});
+backdrop?.addEventListener('click', closeDrawer);
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeDrawer();
+});
+</script>
+</body>
+</html>
