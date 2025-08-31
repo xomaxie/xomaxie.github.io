@@ -1,15 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GateStore Blueprint API — Quick Reference (nav v2)</title>
+<title>Eryndor — Dev Quick Reference (nav v2)</title>
 <style>
 :root{ --bg:#0f141a; --fg:#e6edf3; --muted:#9aa4af; --line:#293241; --primary:#64b5f6; --pri-2:#90caf9; --chip:#082032; --chip-fg:#90caf9; --card:#111827; --kbd-bg:#1f2937; }
 *{ box-sizing:border-box } body{ margin:0; background:var(--bg); color:var(--fg); font: 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,system-ui; }
-.container{ display:grid; grid-template-columns: 300px 1fr; min-height:100vh }
-aside{ border-right:1px solid var(--line); padding:1rem; position:sticky; top:0; height:100vh; overflow:auto }
+header{ display:flex; align-items:center; gap:.75rem; padding:.75rem 1rem; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(15,20,26,.9); backdrop-filter:saturate(1.2) blur(6px); z-index:50 }
+.logo{ font-weight:700; letter-spacing:.4px; }
+.logo small{ display:block; color:var(--muted); font-weight:500; letter-spacing:.2px; }
+.container{ display:grid; grid-template-columns: 300px 1fr; min-height:calc(100vh - 56px) }
+aside{ border-right:1px solid var(--line); padding:1rem; position:sticky; top:56px; height:calc(100vh - 56px); overflow:auto }
 main{ padding:1rem 2rem; scroll-behavior:smooth; }
 .search{ display:flex; gap:.5rem; margin-bottom:.5rem }
 .search input{ flex:1; padding:.5rem .75rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--fg) }
@@ -19,37 +21,112 @@ main{ padding:1rem 2rem; scroll-behavior:smooth; }
 .card .meta{ padding:.5rem 1rem; display:flex; gap:1rem; flex-wrap:wrap; border-bottom:1px dashed var(--line) }
 .tbl{ width:100%; border-collapse:collapse; } .tbl th,.tbl td{ border-top:1px solid var(--line); padding:.5rem .6rem; text-align:left; vertical-align:top; }
 .badge{ display:inline-flex; align-items:center; gap:.25rem; padding:.15rem .45rem; background:var(--chip); color:var(--chip-fg); border-radius:999px; font-size:.75rem; border:1px solid var(--line) }
-.err{ background:#5b1a1a; color:#ffdada; padding:.5rem 1rem; border-bottom:1px solid #7a2b2b; position:sticky; top:0; z-index:20 }
+.err{ background:#5b1a1a; color:#ffdada; padding:.5rem 1rem; border-bottom:1px solid #7a2b2b; position:sticky; top:56px; z-index:60 }
 .toc a{ display:block; padding:.25rem .25rem; border-radius:6px; color:var(--fg); text-decoration:none }
 .toc a:hover{ background:#1c2530; }
 .muted{ color:var(--muted) }
+.kv{ display:flex; gap:.5rem; flex-wrap:wrap }
+.kv div{ background:var(--kbd-bg); border:1px solid var(--line); padding:.15rem .5rem; border-radius:6px; font-size:.8rem }
+hr.sep{ border:0; border-top:1px dashed var(--line); margin:.5rem 0 }
 </style>
 </head>
 <body>
+<header>
+  <div class="logo">
+    FINAL BUILD GAMES
+    <small>Eryndor — Dev Quick Reference</small>
+  </div>
+  <div class="muted">Snapshot: 2025-08-31</div>
+</header>
 <div id="err" class="err" style="display:none"></div>
 <div class="container">
   <aside>
     <div class="search"><input id="q" type="search" placeholder="Search (press / to focus)" /></div>
     <div class="toc"><h3>Contents</h3><div id="toc"></div></div>
     <div class="muted" style="font-size:.85rem;margin-top:.5rem">Tip: Press <kbd>/</kbd> to jump to search.</div>
+    <hr class="sep" />
+    <div class="muted" style="font-size:.85rem">This page is static. Update the DATA block to refresh symbols.</div>
   </aside>
   <main>
-    <div class="section" id="classes"><h2>Classes</h2></div>
-    <div class="section" id="structs"><h2>Structs</h2></div>
-    <div class="section" id="enums"><h2>Enums</h2></div>
-    <div class="section" id="delegates"><h2>Delegates</h2></div>
+    <div class="section" id="singletons"><h2>Singletons (Autoload)</h2></div>
+    <div class="section" id="ui"><h2>UI Scenes / Scripts</h2></div>
+    <div class="section" id="other"><h2>Other Scripts</h2></div>
   </main>
 </div>
 <script>
 "use strict";
 (function(){
-  const DATA = {"classes": [{"name": "AAComputerTerminalActor", "anchor": "AAComputerTerminalActor", "file": "/mnt/data/GateStore_extracted/Public/AComputerTerminalActor.h", "specs": "", "parent": "APawn", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "AAdventurerNPC", "anchor": "AAdventurerNPC", "file": "/mnt/data/GateStore_extracted/Public/AdventurerNPC.h", "specs": "", "parent": "ACharacter", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "ACashRegisterActor", "anchor": "ACashRegisterActor", "file": "/mnt/data/GateStore_extracted/Public/CashRegisterActor.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "AOpenCloseSignActor", "anchor": "AOpenCloseSignActor", "file": "/mnt/data/GateStore_extracted/Public/OpenCloseSignActor.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [{"name": "UpdateSign", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Sign\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "SignMesh", "type": "class UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractBox", "type": "class UBoxComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "SignText", "type": "class UTextRenderComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractComponent", "type": "class UInteractComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "APlaceableFurnitureActor", "anchor": "APlaceableFurnitureActor", "file": "/mnt/data/GateStore_extracted/Public/PlaceableFurnitureActor.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [{"name": "ConfirmPlacement", "ret": "void", "args": "", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "CancelPlacement", "ret": "void", "args": "", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "AdjustGhostHeight", "ret": "void", "args": "float Delta", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "RotateGhostYaw", "ret": "void", "args": "float Delta", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "ResetGhostTransform", "ret": "void", "args": "", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "UpdateVisuals", "ret": "void", "args": "", "specs": "BlueprintCallable", "kinds": ["BlueprintCallable"]}, {"name": "CollectSnapPoints", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Snapping\"", "kinds": ["BlueprintCallable"]}], "events": [{"name": "OnPlacementComplete", "ret": "void", "args": "", "specs": "BlueprintImplementableEvent, BlueprintCallable, Category = \"Furniture\"", "kinds": ["BlueprintCallable", "BlueprintImplementableEvent"]}], "properties": [{"name": "SnapPointA", "type": "USceneComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "SnapPointB", "type": "USceneComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "SnapPoints", "type": "TArray<USceneComponent*>", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Snapping\"", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractComponent", "type": "UInteractComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractionBox", "type": "UBoxComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "BoxMesh", "type": "UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "PlacedMesh", "type": "UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "GhostMesh", "type": "UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "GroundSnapPoint", "type": "UArrowComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "PlacementState", "type": "EFurniturePlacementState", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Placement\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ArmLevelOffset", "type": "float", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Placement\"", "kinds": ["BlueprintReadWrite"]}, {"name": "GhostOffsetZ", "type": "float", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Placement\"", "kinds": ["BlueprintReadWrite"]}, {"name": "GhostRotationYaw", "type": "float", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Placement\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "ASelfActor", "anchor": "ASelfActor", "file": "/mnt/data/GateStore_extracted/Public/SelfActor.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "AShopBuilding", "anchor": "AShopBuilding", "file": "/mnt/data/GateStore_extracted/Public/ShopBuilding.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [{"name": "GetRandomPointInShop", "ret": "FVector", "args": "", "specs": "BlueprintCallable, Category = \"Shop\"", "kinds": ["BlueprintCallable"]}, {"name": "IsPointInsideShop", "ret": "bool", "args": "const FVector& WorldPoint", "specs": "BlueprintCallable, Category = \"Shop\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "ShopBounds", "type": "class UBoxComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Shop\"", "kinds": ["BlueprintReadOnly"]}, {"name": "Entrance", "type": "class USceneComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Shop\"", "kinds": ["BlueprintReadOnly"]}, {"name": "FurnitureRoot", "type": "USceneComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Shop\"", "kinds": ["BlueprintReadOnly"]}, {"name": "ShopVisual", "type": "class UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Shop\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "AShopHUD", "anchor": "AShopHUD", "file": "/mnt/data/GateStore_extracted/Public/ShopHUD.h", "specs": "", "parent": "AHUD", "blueprintable": false, "functions": [], "events": [], "properties": [{"name": "MainHUDWidget", "type": "UShopHUDWidget*", "specs": "BlueprintReadOnly, Category = \"UI\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "AShopItemActor", "anchor": "AShopItemActor", "file": "/mnt/data/GateStore_extracted/Public/ShopItemActor.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [{"name": "GetDisplayName", "ret": "FText", "args": "", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}, {"name": "SetPriceValue", "ret": "void", "args": "int32 NewPrice", "specs": "BlueprintCallable, Category = \"Shop\"", "kinds": ["BlueprintCallable"]}, {"name": "ResetPriceToDefault", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop\"", "kinds": ["BlueprintCallable"]}, {"name": "LoadItemData", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}, {"name": "SetItemID", "ret": "void", "args": "FName NewItemID", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}, {"name": "Interact", "ret": "void", "args": "AActor* Interactor", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}, {"name": "PlaceOnSurface", "ret": "void", "args": "USceneComponent* Parent, FName SocketName", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}, {"name": "Drop", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Item\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "Root", "type": "USceneComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Item\"", "kinds": ["BlueprintReadOnly"]}, {"name": "MeshComponent", "type": "UStaticMeshComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Item\"", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractionBox", "type": "UBoxComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Item\"", "kinds": ["BlueprintReadOnly"]}, {"name": "InteractComponent", "type": "UInteractComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Item\"", "kinds": ["BlueprintReadOnly"]}, {"name": "ItemID", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Item Data\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ItemDataTable", "type": "UDataTable*", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Item Data\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ItemData", "type": "FItemData", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Item Data\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "AShopPlayerCharacter", "anchor": "AShopPlayerCharacter", "file": "/mnt/data/GateStore_extracted/Public/ShopPlayerCharacter.h", "specs": "", "parent": "ACharacter", "blueprintable": false, "functions": [{"name": "IsItemSocketOccupied", "ret": "bool", "args": "", "specs": "BlueprintCallable, Category = \"Interaction\"", "kinds": ["BlueprintCallable"]}], "events": [{"name": "Interact", "ret": "void", "args": "", "specs": "BlueprintCallable, BlueprintNativeEvent, Category = \"Interaction\"", "kinds": ["BlueprintCallable", "BlueprintNativeEvent"]}], "properties": [{"name": "SpringArm", "type": "USpringArmComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Camera\"", "kinds": ["BlueprintReadOnly"]}, {"name": "Camera", "type": "UCameraComponent*", "specs": "VisibleAnywhere, BlueprintReadOnly, Category = \"Camera\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "AShopSimulatorGameMode", "anchor": "AShopSimulatorGameMode", "file": "/mnt/data/GateStore_extracted/Public/ShopSimulatorGameMode.h", "specs": "", "parent": "AGameModeBase", "blueprintable": false, "functions": [{"name": "StartNewDay", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintCallable"]}, {"name": "OpenShop", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintCallable"]}, {"name": "CloseShop", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintCallable"]}, {"name": "SaveShopState", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop|Save\"", "kinds": ["BlueprintCallable"]}, {"name": "LoadShopState", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Shop|Save\"", "kinds": ["BlueprintCallable"]}], "events": [{"name": "OnNewDay", "ret": "void", "args": "", "specs": "BlueprintNativeEvent, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintNativeEvent"]}, {"name": "OnShopOpened", "ret": "void", "args": "", "specs": "BlueprintNativeEvent, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintNativeEvent"]}, {"name": "OnShopClosed", "ret": "void", "args": "", "specs": "BlueprintNativeEvent, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintNativeEvent"]}], "properties": [{"name": "CurrentDay", "type": "int32", "specs": "BlueprintReadOnly, Category = \"Shop|DayCycle\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "AShopSimulatorPlayerController", "anchor": "AShopSimulatorPlayerController", "file": "/mnt/data/GateStore_extracted/Public/ShopSimulatorPlayerController.h", "specs": "", "parent": "APlayerController", "blueprintable": false, "functions": [{"name": "ShowPauseMenu", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"UI\"", "kinds": ["BlueprintCallable"]}, {"name": "HidePauseMenu", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"UI\"", "kinds": ["BlueprintCallable"]}, {"name": "TogglePauseMenu", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"UI\"", "kinds": ["BlueprintCallable"]}, {"name": "OnFurniturePickedUp", "ret": "void", "args": "APlaceableFurnitureActor* PickedUp", "specs": "BlueprintCallable, Category = \"Furniture\"", "kinds": ["BlueprintCallable"]}, {"name": "GetShopPawn", "ret": "AShopPlayerCharacter*", "args": "", "specs": "BlueprintCallable, Category = \"Pawn\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "PauseMenuWidgetClass", "type": "TSubclassOf<UPauseMenuWidget>", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"UI\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "AShopSkyManager", "anchor": "AShopSkyManager", "file": "/mnt/data/GateStore_extracted/Public/ShopSkyManager.h", "specs": "", "parent": "AActor", "blueprintable": false, "functions": [{"name": "SetSkyTime", "ret": "bool", "args": "float Hours", "specs": "BlueprintCallable, Category = \"Sky\"", "kinds": ["BlueprintCallable"]}, {"name": "SyncSkyTimeFromSubsystem", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Sky\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "UltraDynamicSkyActor", "type": "AActor*", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Sky\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "UButtonWidget", "anchor": "UButtonWidget", "file": "/mnt/data/GateStore_extracted/Public/ButtonWidget.h", "specs": "", "parent": "UUserWidget", "blueprintable": false, "functions": [{"name": "SetButtonText", "ret": "void", "args": "const FText& NewText", "specs": "BlueprintCallable, Category = \"Button\"", "kinds": ["BlueprintCallable"]}, {"name": "GetButtonText", "ret": "FText", "args": "", "specs": "BlueprintCallable, Category = \"Button\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [], "assignables": [{"name": "OnClicked", "type": "FOnButtonClicked", "specs": "BlueprintAssignable, Category = \"Button\""}]}, {"name": "UEventManagerSubsystem", "anchor": "UEventManagerSubsystem", "file": "/mnt/data/GateStore_extracted/Public/EventManagerSubsystem.h", "specs": "", "parent": "UWorldSubsystem", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "UGameTimeSubsystem", "anchor": "UGameTimeSubsystem", "file": "/mnt/data/GateStore_extracted/Public/GameTimeSubsystem.h", "specs": "", "parent": "UWorldSubsystem, public FTickableGameObject", "blueprintable": false, "functions": [{"name": "SetTimePaused", "ret": "void", "args": "bool bPaused", "specs": "BlueprintCallable, Category = \"GameTime\"", "kinds": ["BlueprintCallable"]}, {"name": "SetTimeOfDay", "ret": "void", "args": "float NewTime", "specs": "BlueprintCallable, Category = \"GameTime\"", "kinds": ["BlueprintCallable"]}, {"name": "StartNewDay", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"GameTime\"", "kinds": ["BlueprintCallable"]}, {"name": "IsShopOpen", "ret": "bool", "args": "", "specs": "BlueprintPure, Category = \"GameTime\"", "kinds": ["BlueprintPure"]}], "events": [], "properties": [{"name": "CurrentDay", "type": "int32", "specs": "BlueprintReadOnly, Category = \"GameTime\"", "kinds": ["BlueprintReadOnly"]}, {"name": "TimeOfDay", "type": "float", "specs": "BlueprintReadOnly, Category = \"GameTime\"", "kinds": ["BlueprintReadOnly"]}, {"name": "SecondsPerDay", "type": "float", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"GameTime\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ShopOpenHour", "type": "int32", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Shop\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ShopCloseHour", "type": "int32", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Shop\"", "kinds": ["BlueprintReadWrite"]}, {"name": "bTimePaused", "type": "bool", "specs": "BlueprintReadOnly, Category = \"GameTime\"", "kinds": ["BlueprintReadOnly"]}], "assignables": [{"name": "OnNewDay", "type": "FOnShopDayEvent", "specs": "BlueprintAssignable, Category = \"GameTime|Events\""}, {"name": "OnShopOpened", "type": "FOnShopDayEvent", "specs": "BlueprintAssignable, Category = \"GameTime|Events\""}, {"name": "OnShopClosed", "type": "FOnShopDayEvent", "specs": "BlueprintAssignable, Category = \"GameTime|Events\""}, {"name": "OnTimeChanged", "type": "FOnTimeChangedEvent", "specs": "BlueprintAssignable, Category = \"GameTime|Events\""}]}, {"name": "UInteractPromptWidget", "anchor": "UInteractPromptWidget", "file": "/mnt/data/GateStore_extracted/Public/InteractPromptWidget.h", "specs": "", "parent": "UUserWidget", "blueprintable": false, "functions": [{"name": "SetInteractText", "ret": "void", "args": "const FText& Verb, const FText& ItemName", "specs": "BlueprintCallable, Category = \"UI\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [], "assignables": []}, {"name": "UMainMenuWidget", "anchor": "UMainMenuWidget", "file": "/mnt/data/GateStore_extracted/Public/MainMenuWidget.h", "specs": "", "parent": "UUserWidget", "blueprintable": false, "functions": [{"name": "PopulateMenu", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Menu\"", "kinds": ["BlueprintCallable"]}, {"name": "ClearMenu", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Menu\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "ButtonWidgetClass", "type": "TSubclassOf<UButtonWidget>", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Menu\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "UPauseMenuWidget", "anchor": "UPauseMenuWidget", "file": "/mnt/data/GateStore_extracted/Public/PauseMenuWidget.h", "specs": "", "parent": "UMainMenuWidget", "blueprintable": false, "functions": [], "events": [], "properties": [{"name": "MainMenuLevelName", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"Menu\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "UShopGameInstance", "anchor": "UShopGameInstance", "file": "/mnt/data/GateStore_extracted/Public/ShopGameInstance.h", "specs": "", "parent": "UGameInstance", "blueprintable": false, "functions": [{"name": "SaveGame", "ret": "bool", "args": "", "specs": "BlueprintCallable, Category = \"Save\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [{"name": "CurrentSave", "type": "UShopSaveGame*", "specs": "BlueprintReadOnly, Category = \"Save\"", "kinds": ["BlueprintReadOnly"]}, {"name": "SaveSlotName", "type": "FString", "specs": "BlueprintReadOnly, Category = \"Save\"", "kinds": ["BlueprintReadOnly"]}], "assignables": []}, {"name": "UShopHUDWidget", "anchor": "UShopHUDWidget", "file": "/mnt/data/GateStore_extracted/Public/ShopHUDWidget.h", "specs": "", "parent": "UUserWidget", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}, {"name": "UShopSaveGame", "anchor": "UShopSaveGame", "file": "/mnt/data/GateStore_extracted/Public/ShopSaveGame.h", "specs": "", "parent": "USaveGame", "blueprintable": false, "functions": [], "events": [], "properties": [{"name": "PlayerMoney", "type": "int32", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"SaveData\"", "kinds": ["BlueprintReadWrite"]}, {"name": "CurrentDay", "type": "int32", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"SaveData\"", "kinds": ["BlueprintReadWrite"]}, {"name": "ShopInventory", "type": "TArray<FShopItemStack>", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"SaveData\"", "kinds": ["BlueprintReadWrite"]}, {"name": "PlacedFurniture", "type": "TArray<FPlacedFurnitureSave>", "specs": "EditAnywhere, BlueprintReadWrite, Category = \"SaveData\"", "kinds": ["BlueprintReadWrite"]}], "assignables": []}, {"name": "UShopStatsSubsystem", "anchor": "UShopStatsSubsystem", "file": "/mnt/data/GateStore_extracted/Public/ShopStatsSubsystem.h", "specs": "Blueprintable", "parent": "UGameInstanceSubsystem", "blueprintable": true, "functions": [{"name": "AddSale", "ret": "void", "args": "float Amount", "specs": "BlueprintCallable, Category = \"Stats\"", "kinds": ["BlueprintCallable"]}, {"name": "SpendMoney", "ret": "void", "args": "float Amount", "specs": "BlueprintCallable, Category = \"Stats\"", "kinds": ["BlueprintCallable"]}, {"name": "IncrementVisitor", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Stats\"", "kinds": ["BlueprintCallable"]}, {"name": "ResetDailyStats", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"Stats\"", "kinds": ["BlueprintCallable"]}, {"name": "OpenShop", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}, {"name": "CloseShop", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [], "assignables": []}, {"name": "UShopStatsWidgetBase", "anchor": "UShopStatsWidgetBase", "file": "/mnt/data/GateStore_extracted/Public/ShopStatsWidgetBase.h", "specs": "Abstract, Blueprintable", "parent": "UUserWidget", "blueprintable": true, "functions": [{"name": "UpdateStats", "ret": "void", "args": "", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}, {"name": "SetStatusText", "ret": "void", "args": "const FText& NewText", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}, {"name": "SetCustomersTodayText", "ret": "void", "args": "const FText& NewText", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}, {"name": "SetRevenueTodayText", "ret": "void", "args": "const FText& NewText", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}, {"name": "SetGoldText", "ret": "void", "args": "const FText& NewText", "specs": "BlueprintCallable, Category = \"ShopStats\"", "kinds": ["BlueprintCallable"]}], "events": [], "properties": [], "assignables": []}, {"name": "UStockDeliveryManagerSubsystem", "anchor": "UStockDeliveryManagerSubsystem", "file": "/mnt/data/GateStore_extracted/Public/StockDeliveryManagerSubsystem.h", "specs": "", "parent": "UWorldSubsystem", "blueprintable": false, "functions": [], "events": [], "properties": [], "assignables": []}], "structs": [{"name": "FItemData", "anchor": "FItemData", "file": "/mnt/data/GateStore_extracted/Public/ItemDataStruct.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "ItemID", "type": "FName", "specs": "EditAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "Name", "type": "FText", "specs": "EditAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "Brand", "type": "FText", "specs": "EditAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}, {"name": "Description", "type": "FText", "specs": "EditAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}]}, {"name": "FOrderCartItem", "anchor": "FOrderCartItem", "file": "/mnt/data/GateStore_extracted/Public/ItemDataStruct.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "ItemID", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}]}, {"name": "FPlacedFurnitureSave", "anchor": "FPlacedFurnitureSave", "file": "/mnt/data/GateStore_extracted/Public/ShopSaveGame.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "FurnitureType", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}, {"name": "WorldTransform", "type": "FTransform", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}, {"name": "StoredItems", "type": "TArray<FShopItemStack>", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}]}, {"name": "FShopInventoryItem", "anchor": "FShopInventoryItem", "file": "/mnt/data/GateStore_extracted/Public/ItemDataStruct.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "ItemID", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}]}, {"name": "FShopItemStack", "anchor": "FShopItemStack", "file": "/mnt/data/GateStore_extracted/Public/ShopSaveGame.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "ItemID", "type": "FName", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}, {"name": "Count", "type": "int32", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}, {"name": "Condition", "type": "float", "specs": "EditAnywhere, BlueprintReadWrite", "kinds": ["BlueprintReadWrite"]}]}, {"name": "FShopOrder", "anchor": "FShopOrder", "file": "/mnt/data/GateStore_extracted/Public/ItemDataStruct.h", "specs": "BlueprintType", "blueprintable": true, "properties": [{"name": "Items", "type": "TArray<FOrderCartItem>", "specs": "EditAnywhere, BlueprintReadOnly", "kinds": ["BlueprintReadOnly"]}]}], "enums": [{"name": "EDisplayType", "anchor": "EDisplayType", "file": "/mnt/data/GateStore_extracted/Public/ItemDataStruct.h", "specs": "BlueprintType", "items": ["Shelf UMETA(DisplayName = \"Shelf\")", "Fridge UMETA(DisplayName = \"Fridge\")", "Freezer UMETA(DisplayName = \"Freezer\")", "Stand UMETA(DisplayName = \"Stand\")", "Counter UMETA(DisplayName = \"Counter\")", "// Add more as needed"]}, {"name": "EFurniturePlacementState", "anchor": "EFurniturePlacementState", "file": "/mnt/data/GateStore_extracted/Public/PlaceableFurnitureActor.h", "specs": "BlueprintType", "items": ["Box", "PlacementGhost", "Placed"]}, {"name": "EItemType", "anchor": "EItemType", "file": "/mnt/data/GateStore_extracted/Public/ItemType.h", "specs": "BlueprintType", "items": ["General UMETA(DisplayName = \"General\")", "Weapon UMETA(DisplayName = \"Weapon\")", "Armor UMETA(DisplayName = \"Armor\")", "Potion UMETA(DisplayName = \"Potion\")", "Tool UMETA(DisplayName = \"Tool\")", "Consumable UMETA(DisplayName = \"Consumable\")", "KeyItem UMETA(DisplayName = \"Key Item\")", "Resource UMETA(DisplayName = \"Resource\")", "Quest UMETA(DisplayName = \"Quest\")", "Material UMETA(DisplayName = \"Material\")", "Currency UMETA(DisplayName = \"Currency\")", "Furniture UMETA(DisplayName = \"Furniture\")", "// Extend as needed"]}], "delegates": []};
+  // ---------------------------------------------------------------------------
+  // DATA: Update this block when the project changes.
+  // ---------------------------------------------------------------------------
+  const DATA = {
+    project: { name: "Eryndor", org: "Final Build Games", snapshot: "2025-08-31" },
+    singletons: [
+      {
+        name: "Economy",
+        anchor: "Autoload_Economy",
+        path: "Autoload/Economy.gd",
+        class_name: "Economy",
+        extends: "Node",
+        signals: [{ name: "purchase_made", args: "kind:String, units:int, cost:int" }],
+        exports: [{ name: "wood_price", type: "int" }, { name: "metal_price", type: "int" }],
+        public: [
+          { name: "balance", ret: "int", args: "" },
+          { name: "get_unit_price", ret: "int", args: "resource:String" },
+          { name: "estimate_buy_cost", ret: "int", args: "resource:String, amount:int" },
+          { name: "can_afford", ret: "bool", args: "amount:int" },
+          { name: "earn_gold", ret: "void", args: "amount:int, reason:String=\"\"" },
+          { name: "spend_gold", ret: "bool", args: "amount:int, reason:String=\"\"" },
+          { name: "buy", ret: "bool", args: "resource:String, amount:int" },
+          { name: "weapon_craft_cost", ret: "Dictionary", args: "" },
+          { name: "armor_craft_cost", ret: "Dictionary", args: "" },
+          { name: "can_craft", ret: "bool", args: "cost:Dictionary" },
+          { name: "try_consume_for_craft", ret: "bool", args: "cost:Dictionary, label:String" }
+        ],
+        internal: []
+      }
+      // Note: GameState omitted because it wasn't present in the uploaded zip snapshot.
+    ],
+    ui: [
+      {
+        name: "UI_EconomyTest",
+        anchor: "UI_UI_EconomyTest",
+        path: "User Interface/economy_test.gd",
+        class_name: "UI_EconomyTest",
+        extends: "Control",
+        public: [],
+        internal: [
+          { name: "_ready", ret: "void", args: "" },
+          { name: "_on_res_changed", ret: "void", args: "s:Dictionary" },
+          { name: "_on_day_changed", ret: "void", args: "d:int" },
+          { name: "_on_tx", ret: "void", args: "entry:Dictionary" },
+          { name: "_on_purchase", ret: "void", args: "kind:String, units:int, cost:int" },
+          { name: "_on_earn10", ret: "void", args: "" },
+          { name: "_on_spend50", ret: "void", args: "" },
+          { name: "_on_buy_wood", ret: "void", args: "" },
+          { name: "_on_buy_metal", ret: "void", args: "" },
+          { name: "_on_craft_weapon", ret: "void", args: "" },
+          { name: "_on_craft_armor", ret: "void", args: "" },
+          { name: "_on_next_day", ret: "void", args: "" },
+          { name: "_refresh_prices", ret: "void", args: "" },
+          { name: "_cost_text", ret: "String", args: "cost:Dictionary" },
+          { name: "_append_log", ret: "void", args: "line:String" }
+        ]
+      }
+    ],
+    other: [
+      // Add additional scripts here as they appear in the repo.
+    ]
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
   const $ = (s,root=document)=>root.querySelector(s);
   const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
   const err = document.getElementById('err');
   function showErr(msg){ err.textContent = msg; err.style.display='block'; console.error(msg); }
   function ensureArray(v){ if(Array.isArray(v)) return v; if(typeof v==='string' && v.length) return v.split(',').map(s=>s.trim()).filter(Boolean); return []; }
-
   function makeTable(headings){
     const tbl = document.createElement('table'); tbl.className='tbl';
     const thead = document.createElement('thead'); const tr = document.createElement('tr');
@@ -58,141 +135,74 @@ main{ padding:1rem 2rem; scroll-behavior:smooth; }
     const tbody = document.createElement('tbody'); tbl.appendChild(tbody);
     return [tbl, tbody];
   }
-
   function addTOC(container, anchor, text){
     const a = document.createElement('a'); a.href = '#'+anchor; a.textContent = text;
     container.appendChild(a);
   }
 
+  // ---------------------------------------------------------------------------
+  // Renderers
+  // ---------------------------------------------------------------------------
+  function renderScriptCard(targetSection, s, kindIcon, kindLabel){
+    const anchor = s.anchor || s.name;
+    const card = document.createElement('div'); card.className='card'; card.id = anchor;
+    const hdr = document.createElement('div'); hdr.className='card-hdr';
+    hdr.innerHTML = `<h3>${kindIcon} ${s.name}</h3> <span class="muted">${s.path || ''}</span>`;
+    card.appendChild(hdr);
+
+    const meta = document.createElement('div'); meta.className='meta';
+    const bits = [];
+    if(s.class_name) bits.push(`<div><strong>class_name</strong>: <code>${s.class_name}</code></div>`);
+    if(s.extends) bits.push(`<div><strong>extends</strong>: <code>${s.extends}</code></div>`);
+    if(s.signals && s.signals.length){
+      bits.push(`<div><strong>signals</strong>: <code>${s.signals.map(x=>x.name).join(', ')}</code></div>`);
+    }
+    if(s.exports && s.exports.length){
+      bits.push(`<div><strong>exports</strong>: <code>${s.exports.map(x=>`${x.name}:${x.type}`).join(', ')}</code></div>`);
+    }
+    meta.innerHTML = bits.join(''); card.appendChild(meta);
+
+    if(s.public && s.public.length){
+      const [tbl, body] = makeTable(['Public Method','Signature']);
+      s.public.forEach(f=>{
+        const sig = `${f.ret || 'void'} ${f.name}(${f.args||''})`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><code>${f.name}</code></td><td><code>${sig}</code></td>`;
+        body.appendChild(tr);
+      });
+      card.appendChild(tbl);
+    }
+
+    if(s.internal && s.internal.length){
+      const [tbl, body] = makeTable(['Internal Method','Signature']);
+      s.internal.forEach(f=>{
+        const sig = `${f.ret || 'void'} ${f.name}(${f.args||''})`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><code>${f.name}</code></td><td><code>${sig}</code></td>`;
+        body.appendChild(tr);
+      });
+      card.appendChild(tbl);
+    }
+
+    targetSection.appendChild(card);
+    addTOC(document.getElementById('toc'), anchor, `${kindLabel}: ${s.name}`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Boot
+  // ---------------------------------------------------------------------------
   try{
-    const secClasses = document.getElementById('classes');
-    const secStructs = document.getElementById('structs');
-    const secEnums = document.getElementById('enums');
-    const secDelegates = document.getElementById('delegates');
+    const secSingletons = document.getElementById('singletons');
+    const secUI = document.getElementById('ui');
+    const secOther = document.getElementById('other');
     const toc = document.getElementById('toc');
     const q = document.getElementById('q');
 
     document.addEventListener('keydown', (e)=>{ if(e.key==='/'){ e.preventDefault(); q && q.focus(); }});
 
-    // Classes
-    (DATA.classes||[]).forEach(c=>{
-      const anchor = c.anchor || c.name;
-      const card = document.createElement('div'); card.className='card'; card.id = anchor;
-      const hdr = document.createElement('div'); hdr.className='card-hdr';
-      hdr.innerHTML = `<h3>📦 ${c.name} ${c.blueprintable?'<span class="badge">Blueprintable</span>':''}</h3> <span class="muted">${c.parent?('Parent: '+c.parent):''}</span>`;
-      card.appendChild(hdr);
-      const meta = document.createElement('div'); meta.className='meta';
-      meta.innerHTML = `<div><strong>Header</strong>: <code>${c.file}</code></div>${c.specs?`<div><strong>UCLASS</strong>: <code>(${c.specs})</code></div>`:''}`;
-      card.appendChild(meta);
-
-      if(c.functions && c.functions.length){
-        const [tbl, body] = makeTable(['Name','Signature','Specifiers','Kinds']);
-        c.functions.forEach(f=>{
-          const kinds = ensureArray(f.kinds);
-          const sig = `${f.ret} ${f.name}(${f.args})`;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td><code>${f.name}</code></td><td><code>${sig}</code></td><td>${f.specs}</td><td>${kinds.join(', ')}</td>`;
-          body.appendChild(tr);
-        });
-        card.appendChild(tbl);
-      }
-      if(c.events && c.events.length){
-        const [tbl, body] = makeTable(['Name','Signature','Specifiers','Kinds']);
-        c.events.forEach(f=>{
-          const kinds = ensureArray(f.kinds);
-          const sig = `${f.ret} ${f.name}(${f.args})`;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td><code>${f.name}</code></td><td><code>${sig}</code></td><td>${f.specs}</td><td>${kinds.join(', ')}</td>`;
-          body.appendChild(tr);
-        });
-        card.appendChild(tbl);
-      }
-      if(c.properties && c.properties.length){
-        const [tbl, body] = makeTable(['Name','Type','Specifiers','Kinds']);
-        c.properties.forEach(p=>{
-          const kinds = ensureArray(p.kinds);
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td><code>${p.name}</code></td><td><code>${p.type}</code></td><td>${p.specs}</td><td>${kinds.join(', ')}</td>`;
-          body.appendChild(tr);
-        });
-        card.appendChild(tbl);
-      }
-      if(c.assignables && c.assignables.length){
-        const [tbl, body] = makeTable(['Name','Type','Specifiers']);
-        c.assignables.forEach(p=>{
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td><code>${p.name}</code></td><td><code>${p.type}</code></td><td>${p.specs}</td>`;
-          body.appendChild(tr);
-        });
-        card.appendChild(tbl);
-      }
-
-      secClasses.appendChild(card);
-      addTOC(toc, anchor, c.name);
-    });
-
-    // Structs
-    if((DATA.structs||[]).length){
-      const sep = document.createElement('div'); sep.className='muted'; sep.style.marginTop='1rem'; sep.textContent='Structs'; toc.appendChild(sep);
-    }
-    (DATA.structs||[]).forEach(s=>{
-      const anchor = s.anchor || s.name;
-      const card = document.createElement('div'); card.className='card'; card.id = anchor;
-      const hdr = document.createElement('div'); hdr.className='card-hdr';
-      hdr.innerHTML = `<h3>🧱 ${s.name} ${s.blueprintable?'<span class="badge">BlueprintType</span>':''}</h3>`;
-      card.appendChild(hdr);
-      const meta = document.createElement('div'); meta.className='meta';
-      meta.innerHTML = `<div><strong>Header</strong>: <code>${s.file}</code></div>${s.specs?`<div><strong>USTRUCT</strong>: <code>(${s.specs})</code></div>`:''}`;
-      card.appendChild(meta);
-      if(s.properties && s.properties.length){
-        const [tbl, body] = makeTable(['Name','Type','Specifiers','Kinds']);
-        s.properties.forEach(p=>{
-          const kinds = ensureArray(p.kinds);
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td><code>${p.name}</code></td><td><code>${p.type}</code></td><td>${p.specs}</td><td>${kinds.join(', ')}</td>`;
-          body.appendChild(tr);
-        });
-        card.appendChild(tbl);
-      }
-      secStructs.appendChild(card);
-      addTOC(toc, anchor, s.name);
-    });
-
-    // Enums
-    if((DATA.enums||[]).length){
-      const sep = document.createElement('div'); sep.className='muted'; sep.style.marginTop='1rem'; sep.textContent='Enums'; toc.appendChild(sep);
-    }
-    (DATA.enums||[]).forEach(e=>{
-      const anchor = e.anchor || e.name;
-      const card = document.createElement('div'); card.className='card'; card.id = anchor;
-      const hdr = document.createElement('div'); hdr.className='card-hdr';
-      hdr.innerHTML = `<h3>🔢 ${e.name} <span class="badge">BlueprintType</span></h3>`;
-      card.appendChild(hdr);
-      const meta = document.createElement('div'); meta.className='meta';
-      meta.innerHTML = `<div><strong>Header</strong>: <code>${e.file}</code></div>${e.specs?`<div><strong>UENUM</strong>: <code>(${e.specs})</code></div>`:''}`;
-      card.appendChild(meta);
-      const [tbl, body] = makeTable(['Enumerator']);
-      (e.items||[]).forEach(it=>{
-        const tr = document.createElement('tr'); tr.innerHTML = `<td><code>${it}</code></td>`; body.appendChild(tr);
-      });
-      card.appendChild(tbl);
-      secEnums.appendChild(card);
-      addTOC(toc, anchor, e.name);
-    });
-
-    // Delegates
-    if((DATA.delegates||[]).length){
-      const card = document.createElement('div'); card.className='card'; card.id='file-level-delegates';
-      const hdr = document.createElement('div'); hdr.className='card-hdr'; hdr.innerHTML = `<h3>📣 File-level Delegates</h3>`; card.appendChild(hdr);
-      const [tbl, body] = makeTable(['Name','Specifiers','Header']);
-      DATA.delegates.forEach(d=>{
-        const tr = document.createElement('tr'); tr.innerHTML = `<td><code>${d.name}</code></td><td>${d.specs}</td><td><code>${d.file}</code></td>`; body.appendChild(tr);
-      });
-      card.appendChild(tbl); secDelegates.appendChild(card);
-      addTOC(toc, 'file-level-delegates', 'File-level Delegates');
-    } else {
-      secDelegates.style.display='none';
-    }
+    ensureArray(DATA.singletons).forEach(s=>renderScriptCard(secSingletons, s, '🧩', 'Singleton'));
+    ensureArray(DATA.ui).forEach(s=>renderScriptCard(secUI, s, '🖼️', 'UI'));
+    ensureArray(DATA.other).forEach(s=>renderScriptCard(secOther, s, '📄', 'Script'));
 
     // Live search filter
     function applyFilter(txt){
@@ -212,8 +222,8 @@ main{ padding:1rem 2rem; scroll-behavior:smooth; }
     }
     if(q){ q.addEventListener('input', ()=>applyFilter(q.value)); }
 
-    if(!(DATA.classes && DATA.classes.length) && !(DATA.structs && DATA.structs.length) && !(DATA.enums && DATA.enums.length)){
-      showErr('No parsed symbols found. Data missing.');
+    if(!(DATA.singletons && DATA.singletons.length) && !(DATA.ui && DATA.ui.length) && !(DATA.other && DATA.other.length)){
+      showErr('No parsed symbols found. Update the DATA block to include your scripts.');
     }
   } catch(e){
     showErr('Render error: ' + (e && e.message ? e.message : String(e)));
