@@ -200,8 +200,8 @@ hr.sep{ border:0; border-top:1px dashed var(--line); margin:.5rem 0 }
 
     document.addEventListener('keydown', (e)=>{ if(e.key==='/'){ e.preventDefault(); q && q.focus(); }});
 
-    ensureArray(DATA.singletons).forEach(s=>renderScriptCard(secSingletons, s, '🧩', 'Singleton'));
-    ensureArray(DATA.ui).forEach(s=>renderScriptCard(secUI, s, '🖼️', 'UI'));
+    ensureArray(DATA.singletons).forEach(s=>renderScriptCard(secSingletons, s, '⚒️', 'Singleton'));
+    ensureArray(DATA.ui).forEach(s=>renderScriptCard(secUI, s, '📜', 'UI'));
     ensureArray(DATA.other).forEach(s=>renderScriptCard(secOther, s, '📄', 'Script'));
 
     // Live search filter
